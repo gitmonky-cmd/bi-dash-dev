@@ -87,7 +87,7 @@ wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 tage = [(montag + datetime.timedelta(days=i)).strftime(f"{wochentage_kurz[i]} (%d.%m.)") for i in range(7)]
 
 st.subheader("1️⃣ Aktuelle Woche: Lokale Erzeugung vs. Überregionaler Netz-Import")
-st.write("Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug (MWh/Tag):")
+st.write("Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug inkl. Stromimporten (MWh/Tag):")
 
 df_pv = fetch_smard_series(filter_id="4068")
 df_load = fetch_smard_series(filter_id="410")
@@ -100,13 +100,16 @@ else:
     base_pv = [180, 220, 150, 90, 210, 250, 230]
     base_load = [500, 510, 520, 525, 490, 410, 380]
 
+# Aufteilung des Rests (Importbedarfs) auf die Quellen
+# 45% Regionalwind, 35% Fossile, 12% Kernkraft-Import (FR/CZ), 8% Sonstiger Import (AT/CH)
 erzeugung_data = {
     "Tag": tage,
     "🏡 Photovoltaik (Lokal 96114/96146)": base_pv,
     "🏡 Biomasse & Wasserkraft (Lokal)": [60, 60, 60, 60, 60, 55, 55],
     "🌐 Regionaler Netz-Import: Windenergie": [int((l - pv - 60) * 0.45) for l, pv in zip(base_load, base_pv)],
     "🌐 Regionaler Netz-Import: Fossile Reserven": [int((l - pv - 60) * 0.35) for l, pv in zip(base_load, base_pv)],
-    "🌐 Regionaler Netz-Import: Sonstige/Ausland": [int((l - pv - 60) * 0.20) for l, pv in zip(base_load, base_pv)]
+    "⚛️ Ausland-Import: Rechnerische Kernkraft (FR/CZ)": [int((l - pv - 60) * 0.12) for l, pv in zip(base_load, base_pv)],
+    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": [int((l - pv - 60) * 0.08) for l, pv in zip(base_load, base_pv)]
 }
 
 df_erzeugung = pd.DataFrame(erzeugung_data)
@@ -117,7 +120,8 @@ farben = {
     "🏡 Biomasse & Wasserkraft (Lokal)": "#00E676",
     "🌐 Regionaler Netz-Import: Windenergie": "#00E5FF",
     "🌐 Regionaler Netz-Import: Fossile Reserven": "#FF9100",
-    "🌐 Regionaler Netz-Import: Sonstige/Ausland": "#D500F9"
+    "⚛️ Ausland-Import: Rechnerische Kernkraft (FR/CZ)": "#D500F9",
+    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": "#7C4DFF"
 }
 
 for spalte, farbe in farben.items():
@@ -170,6 +174,7 @@ with m1:
     st.write("• **Hirschaid:** 41,2 %")
     st.write("• **Altendorf:** 48,5 %")
     st.write("• **Landkreis Bamberg (alle Kommunen):** ca. 34,8 %")
+    st.write("• **Region Oberfranken-West (Region 4):** ca. 49,5 %")
     st.caption("Lokaler Durchschnitt (Hirschaid & Altendorf): 42,5 %")
 
 with m2:
@@ -267,12 +272,12 @@ with col_pie_r:
     )
     st.plotly_chart(fig_donut_a, use_container_width=True)
 
-# BEGRIFFS-DEFINITIONSBOX FÜR DIE BÜRGER
+# BEGRIFFS-DEFINITIONSBOX FÜR DIE BÜRGER INKL. KERNKRAFT-HINWEIS
 st.info("""
-**🗺️ Begriffsklärung & Regionale Arbeitsteilung:**  
-* **Was bedeutet \"Region\"?** Die Region umfasst primär das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie angrenzenden Teilen der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
-* **Woher stammt der Netz-Import (Windenergie)?** Dieser Strom speist sich aus Windkraftanlagen umliegender Gemeinden des Landkreises Bamberg sowie aus benachbarten Landkreisen (z. B. Forchheim, Lichtenfels, Bayreuth), die direkt in das gemeinsame Verteilnetz einspeisen.
-* **Geografische Realität vor Ort:** Auf den Gemeindegebieten von Hirschaid & Altendorf stehen aufgrund von Siedlungsdichte, Schutzgebieten und Abstandsflächen **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. Die beiden Gemeinden tragen ihren Beitrag zur Energiewende über überdurchschnittlich viele **PV-Dach- und Freiflächenanlagen sowie Wasserkraft an der Regnitz** bei.
+**🗺️ Begriffsklärung & Import-Struktur:**  
+* **Rechnerischer Kernkraft-Import (⚛️):** Seit dem Atomausstieg wird im Inland kein Kernstrom mehr erzeugt. Wenn Strom aus Nachbarländern (insbesondere Frankreich und Tschechien) importiert wird, fließt bilanziell der Erzeugungsmix des Herkunftslandes mit ein (in Frankreich z. B. zu ~65 % Kernenergie).
+* **Was bedeutet \"Region\"?** Die Region umfasst das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie Teile der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
+* **Geografische Realität vor Ort:** Auf den Gemeindegebieten von Hirschaid & Altendorf stehen aufgrund von Siedlungsdichte, Schutzgebieten und Abstandsflächen **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. Der lokale Beitrag zur Energiewende erfolgt über **PV-Dach- und Freiflächenanlagen sowie Wasserkraft an der Regnitz**.
 """)
 
 # =============================================================================
