@@ -2,21 +2,21 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. SEITEN-LAYOUT EINSTELLEN (Muss ganz oben stehen!)
+# 1. SEITEN-LAYOUT EINSTELLEN
 st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
 
 # 2. TITEL & HEADER
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
-st.caption("Ein Service der Bürgerinitiative | Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR")
+st.caption("Ein Service der Bürgerinitiative | Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
 
 st.markdown("---")
 
-# 3. KENNZAHLEN / QUICK-FACTS (Dark-Mode Karten)
+# 3. KENNZAHLEN / QUICK-FACTS (Karten mit beiden PLZ)
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.metric(
-        label="Installierte PV-Leistung (96114 & 96145)", 
+        label="Installierte PV-Leistung (96114 & 96146)", 
         value="45,2 MWp", 
         delta="Stand MaStR"
     )
@@ -38,7 +38,7 @@ with col3:
 
 st.markdown("---")
 
-# 4. LIVE-NETZMIX DIAGRAMM (Mit Unterscheidung zwischen PV und Wind)
+# 4. LIVE-NETZMIX DIAGRAMM
 st.subheader("📊 Physikalisch-Bilanzielle Herkunft des Stroms im Netz")
 st.write("Aktuelle Schätzung für das Verteilnetzgebiet TenneT / Bayernwerk:")
 
@@ -73,7 +73,7 @@ fig = px.pie(
     hole=0.4
 )
 
-# Style-Anpassung für Dark Mode
+# Dark Mode Layout
 fig.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
@@ -85,7 +85,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 # 5. HINWEISBOX
 st.info("""
-**💡 Der System-Realitäts-Check:**
+**💡 Der System-Realitäts-Check für Hirschaid & Altendorf:**
 Der offizielle *Energie Monitor Bayern* zeigt primär die rein bilanzielle Erzeugung vor Ort. 
 Dieses Dashboard ergänzt die blinden Flecken: **Abregelungen von Ökostrom (Redispatch)** und die **tatsächliche Herkunft des Importstroms**, wenn lokal die Sonne nicht scheint.
 """)
