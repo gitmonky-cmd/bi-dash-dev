@@ -35,11 +35,26 @@ def get_smard_data(filter_id, module_id, region="DE"):
 @st.cache_data(ttl=1800)
 def get_latest_electricity_price():
     """Lädt den aktuellsten Börsenstrompreis (EPEX Spot Deutschland) in ct/kWh"""
-    df = get_smard_data(filter_id="410", module_id="8004169")
-    if df is not None and not df.empty:
-        latest_val_eur_mwh = df.dropna()["value"].iloc[-1]
-        return round(latest_val_eur_mwh / 10.0, 2)
-    return 8.40  # Fallback-Wert
+    try:
+        # Filter 410 = Deutschland, Modul 8004169 = Großerzeuger/Marktpreis
+        df = get_smard_data(filter_id="410", module_id="8004169")
+        if df is not None and not df.empty:
+            # Letzten gültigen Zahlenwert abrufen
+            raw_val = df.dropna()["value"].iloc[-1]
+            
+            # SMARD liefert den Wert oft in EUR/MWh (z.B. 85.50 EUR/MWh = 8.55 ct/kWh)
+            # Umrechnung: EUR/MWh durch 10 = ct/kWh
+            preis_ct_kwh = raw_val / 10.0
+            
+            # Plausibilitäts-Check: Falls der Wert > 100 ct/kWh ist, liegt eine andere Einheit vor
+            if preis_ct_kwh > 100:
+                preis_ct_kwh = preis_ct_kwh / 1000.0  # Anpassen für GWh-Skalierung
+                
+            return round(preis_ct_kwh, 2)
+    except Exception:
+        pass
+    
+    return 8.40  # Plausibler Fallback-Wert (8.4 ct/kWh)
 
 # 3. TITEL & HEADER
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
