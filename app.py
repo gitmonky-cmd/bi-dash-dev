@@ -51,7 +51,7 @@ def get_latest_electricity_price():
 # =============================================================================
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
-st.caption("Ein Service der Bürgerinitiative Hirschaid-Altendorf e.V. | Angaben ohne Gewähr | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
+st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
 
 st.markdown("---")
 
@@ -129,12 +129,28 @@ fig1.add_trace(go.Scatter(
     line=dict(color="#FF1744", width=4), mode="lines+markers"
 ))
 
+# OPTIMIERUNG DER ABSTÄNDE FÜR MOBIL- & HOCHFORMAT-ANSICHT
 fig1.update_layout(
-    barmode="stack", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#FFFFFF", size=13), xaxis=dict(title="Wochentag / Datum", showgrid=False),
+    barmode="stack", 
+    paper_bgcolor="rgba(0,0,0,0)", 
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#FFFFFF", size=13), 
+    xaxis=dict(
+        title=dict(
+            text="Wochentag / Datum",
+            standoff=25  # Schiebt die Schrift Wochentag/Datum nach unten
+        ), 
+        showgrid=False
+    ),
     yaxis=dict(title="MWh / Tag", showgrid=True, gridcolor="#2A3547"),
-    legend=dict(orientation="h", yanchor="bottom", y=-0.5, xanchor="center", x=0.5),
-    margin=dict(l=20, r=20, t=20, b=120)
+    legend=dict(
+        orientation="h", 
+        yanchor="top", 
+        y=-0.45,  # Zieht die Legende unter den Achsentitel
+        xanchor="center", 
+        x=0.5
+    ),
+    margin=dict(l=20, r=20, t=20, b=180)  # Vergrößert den unteren Puffer deutlich
 )
 
 st.plotly_chart(fig1, use_container_width=True)
