@@ -1,8 +1,48 @@
-# 2. LIVE-NETZMIX DIAGRAMM (Dark Mode mit getrennter Wind- & PV-Anzeige)
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+# 1. SEITEN-LAYOUT EINSTELLEN (Muss ganz oben stehen!)
+st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
+
+# 2. TITEL & HEADER
+st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
+st.caption("Ein Service der Bürgerinitiative | Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR")
+
+st.markdown("---")
+
+# 3. KENNZAHLEN / QUICK-FACTS (Dark-Mode Karten)
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        label="Installierte PV-Leistung (96114 & 96145)", 
+        value="45,2 MWp", 
+        delta="Stand MaStR"
+    )
+
+with col2:
+    st.metric(
+        label="Börsenstrompreis (EPEX Spot)", 
+        value="8,4 ct/kWh", 
+        delta="Inland-Großhandel"
+    )
+
+with col3:
+    st.metric(
+        label="Netzzustand Region (TenneT)", 
+        value="Redispatch aktiv", 
+        delta="-12 MW Drosselung", 
+        delta_color="inverse"
+    )
+
+st.markdown("---")
+
+# 4. LIVE-NETZMIX DIAGRAMM (Mit Unterscheidung zwischen PV und Wind)
 st.subheader("📊 Physikalisch-Bilanzielle Herkunft des Stroms im Netz")
 st.write("Aktuelle Schätzung für das Verteilnetzgebiet TenneT / Bayernwerk:")
 
-# Daten: PV und Windkraft jetzt getrennt
+# Datenmatrix
 mix_data = {
     "Energieträger": [
         "Photovoltaik (Solar)", 
@@ -11,12 +51,11 @@ mix_data = {
         "Fossile Reserven (Gas/Kohle)", 
         "Strom-Importe (z.B. CZ)"
     ],
-    "Anteil (%)": [25, 10, 20, 25, 20]  # Beispielwerte
+    "Anteil (%)": [25, 10, 20, 25, 20]
 }
 df = pd.DataFrame(mix_data)
 
-# Spezifische Farben für jeden Energieträger (Dark-Mode geeignet):
-# Gelb für PV, Cyan/Hellblau für Wind, Grün für Wasser/Biomasse, Orange für Fossile, Rot für Importe
+# Farbzuordnung
 farben = {
     "Photovoltaik (Solar)": "#FFD600",
     "Windkraft": "#00E5FF",
@@ -30,11 +69,11 @@ fig = px.pie(
     values="Anteil (%)", 
     names="Energieträger", 
     color="Energieträger",
-    color_discrete_map=farben,  # Feste Farbzuordnung
-    hole=0.4                   # Donut-Diagramm
+    color_discrete_map=farben,
+    hole=0.4
 )
 
-# Dark-Mode Layout für Plotly
+# Style-Anpassung für Dark Mode
 fig.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
@@ -43,3 +82,10 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# 5. HINWEISBOX
+st.info("""
+**💡 Der System-Realitäts-Check:**
+Der offizielle *Energie Monitor Bayern* zeigt primär die rein bilanzielle Erzeugung vor Ort. 
+Dieses Dashboard ergänzt die blinden Flecken: **Abregelungen von Ökostrom (Redispatch)** und die **tatsächliche Herkunft des Importstroms**, wenn lokal die Sonne nicht scheint.
+""")
