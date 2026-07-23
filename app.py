@@ -51,7 +51,7 @@ def get_latest_electricity_price():
 # =============================================================================
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
-st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
+st.caption("Ein Service der Bürgerinitiative Hirschaid-Altendorf e.V. | Angaben ohne Gewähr | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
 
 st.markdown("---")
 
