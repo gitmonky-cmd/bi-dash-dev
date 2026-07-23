@@ -51,7 +51,7 @@ def get_latest_electricity_price():
 # -----------------------------------------------------------------------------
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
-st.caption("Ein Service der Bürgerinitiative | Echtzeit-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
+st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
 
 st.markdown("---")
 
@@ -59,13 +59,26 @@ col1, col2, col3 = st.columns(3)
 live_strompreis = get_latest_electricity_price()
 
 with col1:
-    st.metric(label="Installierte PV-Leistung (96114 & 96146)", value="45,2 MWp", delta="Echtzeit MaStR")
+    st.metric(
+        label="Installierte PV-Leistung (96114 & 96146)", 
+        value="45,2 MWp", 
+        delta="Dächer & Freiflächen"
+    )
 
 with col2:
-    st.metric(label="Börsenstrompreis Live (EPEX Spot)", value=f"{live_strompreis} ct/kWh", delta="SMARD.de API")
+    st.metric(
+        label="Börsenstrompreis Live (EPEX Spot)", 
+        value=f"{live_strompreis} ct/kWh", 
+        delta="SMARD.de API"
+    )
 
 with col3:
-    st.metric(label="Lokale Windleistung auf Gemeindegebiet", value="0,0 MW", delta="Keine WKA vor Ort", delta_color="off")
+    st.metric(
+        label="Lokaler Fokus Erneuerbare", 
+        value="PV & Wasserkraft", 
+        delta="Keine Wind-Eignungsflächen",
+        delta_color="off"
+    )
 
 st.markdown("---")
 
@@ -74,8 +87,8 @@ montag = heute - datetime.timedelta(days=heute.weekday())
 wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 tage = [(montag + datetime.timedelta(days=i)).strftime(f"{wochentage_kurz[i]} (%d.%m.)") for i in range(7)]
 
-st.subheader("1️⃣ Aktuelle Woche: Gemeinde-Erzeugung vs. Regionaler Netz-Import")
-st.write("Echte, physikalisch bilanzierte Erzeugung & Netzbezug für Hirschaid & Altendorf (MWh/Tag):")
+st.subheader("1️⃣ Aktuelle Woche: Lokale Erzeugung vs. Überregionaler Netz-Import")
+st.write("Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug (MWh/Tag):")
 
 df_pv = fetch_smard_series(filter_id="4068")
 df_load = fetch_smard_series(filter_id="410")
@@ -88,14 +101,14 @@ else:
     base_pv = [180, 220, 150, 90, 210, 250, 230]
     base_load = [500, 510, 520, 525, 490, 410, 380]
 
+# Klares Farbschema ohne irreführende Nulllinien
 erzeugung_data = {
     "Tag": tage,
     "🏡 Photovoltaik (Lokal 96114/96146)": base_pv,
     "🏡 Biomasse & Wasserkraft (Lokal)": [60, 60, 60, 60, 60, 55, 55],
-    "🏡 Windkraft (Lokal)": [0, 0, 0, 0, 0, 0, 0],
-    "🌐 Netz-Import: Windkraft (Region)": [int((l - pv - 60) * 0.45) for l, pv in zip(base_load, base_pv)],
-    "🌐 Netz-Import: Fossile Reserven (Gas/Kohle)": [int((l - pv - 60) * 0.35) for l, pv in zip(base_load, base_pv)],
-    "🌐 Netz-Import: Ausland / Sonstige": [int((l - pv - 60) * 0.20) for l, pv in zip(base_load, base_pv)]
+    "🌐 Regionaler Netz-Import: Windenergie": [int((l - pv - 60) * 0.45) for l, pv in zip(base_load, base_pv)],
+    "🌐 Regionaler Netz-Import: Fossile Reserven": [int((l - pv - 60) * 0.35) for l, pv in zip(base_load, base_pv)],
+    "🌐 Regionaler Netz-Import: Sonstige/Ausland": [int((l - pv - 60) * 0.20) for l, pv in zip(base_load, base_pv)]
 }
 
 df_erzeugung = pd.DataFrame(erzeugung_data)
@@ -104,17 +117,16 @@ fig1 = go.Figure()
 farben = {
     "🏡 Photovoltaik (Lokal 96114/96146)": "#FFD600",
     "🏡 Biomasse & Wasserkraft (Lokal)": "#00E676",
-    "🏡 Windkraft (Lokal)": "#37474F",
-    "🌐 Netz-Import: Windkraft (Region)": "#00E5FF",
-    "🌐 Netz-Import: Fossile Reserven (Gas/Kohle)": "#FF9100",
-    "🌐 Netz-Import: Ausland / Sonstige": "#D500F9"
+    "🌐 Regionaler Netz-Import: Windenergie": "#00E5FF",
+    "🌐 Regionaler Netz-Import: Fossile Reserven": "#FF9100",
+    "🌐 Regionaler Netz-Import: Sonstige/Ausland": "#D500F9"
 }
 
 for spalte, farbe in farben.items():
     fig1.add_trace(go.Bar(x=df_erzeugung["Tag"], y=df_erzeugung[spalte], name=spalte, marker_color=farbe))
 
 fig1.add_trace(go.Scatter(
-    x=tage, y=base_load, name="🔻 Strombedarf (Hirschaid & Altendorf)",
+    x=tage, y=base_load, name="🔻 Gesamter Strombedarf (Hirschaid & Altendorf)",
     line=dict(color="#FF1744", width=4), mode="lines+markers"
 ))
 
@@ -135,8 +147,8 @@ st.plotly_chart(fig1, use_container_width=True)
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
-st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Anlagenstruktur")
-st.caption("Entwicklung der rechnerischen Selbstversorgung von Hirschaid & Altendorf im Jahresverlauf")
+st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Potenziale")
+st.caption("Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahresverlauf")
 
 m1, m2, m3 = st.columns(3)
 with m1:
@@ -165,22 +177,29 @@ with col_left:
     st.plotly_chart(fig_area, use_container_width=True)
 
 with col_right:
-    st.subheader("☀️ PV-Aufteilung nach Typ")
+    st.subheader("☀️ Lokale Erzeugungsstruktur")
     pv_typ_data = {
-        "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV"],
-        "Leistung (MWp)": [18.2, 12.0, 15.0]
+        "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
+        "Leistung (MWp / MW)": [18.2, 12.0, 15.0, 2.5]
     }
     df_pv = pd.DataFrame(pv_typ_data)
-    fig_donut = px.pie(df_pv, values="Leistung (MWp)", names="Anlagentyp", hole=0.5, color_discrete_sequence=["#FFD600", "#FF9100", "#00B0FF"])
+    fig_donut = px.pie(df_pv, values="Leistung (MWp / MW)", names="Anlagentyp", hole=0.5, color_discrete_sequence=["#FFD600", "#FF9100", "#00B0FF", "#00E676"])
     fig_donut.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FFFFFF", size=13), legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
     )
     st.plotly_chart(fig_donut, use_container_width=True)
 
+# KLARSTELLENDE HINWEISBOX ZUR GEOGRAFIE
+st.info("""
+**🗺️ Hinweis zur regionalen Arbeitsteilung:**  
+Auf dem Gemeindegebiet Hirschaid & Altendorf stehen aufgrund von Siedlungsstruktur, Abstandsflächen und Schutzgebieten **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. 
+
+Die örtliche Energiewende setzt daher konsequent auf die Nutzung von **Photovoltaik auf Dächern und Freiflächen sowie Wasserkraft an der Regnitz**. Windstrom fließt bedarfsgerecht über das regionale Bayernwerk-Netz aus Nachbarregionen zu.
+""")
 
 # -----------------------------------------------------------------------------
-# DASHBOARD 3 (WEITER RUNTERSCROLLEN): FINANZEN & REGIONALE WERTSCHÖPFUNG
+# DASHBOARD 3: FINANZEN & REGIONALE WERTSCHÖPFUNG
 # -----------------------------------------------------------------------------
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
@@ -252,9 +271,3 @@ with col_fin_r:
     * **CO₂-Abgabe (BEHG):** Bei rund 14.600 Einwohnern fließen geschätzt **1,7 Mio. € pro Jahr** über die CO₂-Bepreisung für Fossile (Gas, Öl, Sprit) an den bundesweiten Klima- und Transformationsfonds (KTF) ab.
     * **Fazit:** Jeder Megawattpeak an neuer PV-Leistung vor Ort vergrößert diesen positiven Saldo und hält die Wertschöpfung in Hirschaid & Altendorf!
     """)
-
-# 9. ABSCHLIESSENDE HINWEISBOX
-st.info("""
-**💡 Bürger-Information:** 
-Diese Hochrechnung basiert auf den registrierten Anlagen im Marktstammdatenregister (MaStR) sowie dem bundesweiten Durchschnittsverbrauch fossiler Brennstoffe pro Kopf.
-""")
