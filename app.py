@@ -12,22 +12,19 @@ st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout=
 def get_smard_data(filter_id, module_id, region="DE"):
     """Holt historische/aktuelle Daten von SMARD.de ab"""
     try:
-        # 1. Index der verfügbaren Zeitstempel abrufen
         index_url = f"https://www.smard.de/app/chart_data/{filter_id}/{region}/index_hour.json"
         res_index = requests.get(index_url, timeout=5)
         if res_index.status_code != 200:
             return None
         
         timestamps = res_index.json()["timestamps"]
-        latest_timestamp = timestamps[-1] # Neuesten verfügbaren Zeitstempel wählen
+        latest_timestamp = timestamps[-1]
 
-        # 2. Konkrete Daten für diesen Zeitstempel laden
         data_url = f"https://www.smard.de/app/chart_data/{filter_id}/{region}/{filter_id}_{region}_hour_{latest_timestamp}.json"
         res_data = requests.get(data_url, timeout=5)
         if res_data.status_code != 200:
             return None
 
-        # In DataFrame umwandeln
         series_data = res_data.json()["series"]
         df = pd.DataFrame(series_data, columns=["timestamp", "value"])
         df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
@@ -38,14 +35,11 @@ def get_smard_data(filter_id, module_id, region="DE"):
 @st.cache_data(ttl=1800)
 def get_latest_electricity_price():
     """Lädt den aktuellsten Börsenstrompreis (EPEX Spot Deutschland) in ct/kWh"""
-    # Filter 410 = Deutschland, Modul 8004169 = Großerzeuger/Marktpreis
     df = get_smard_data(filter_id="410", module_id="8004169")
     if df is not None and not df.empty:
-        # Letzten gültigen Wert nehmen (SMARD liefert €/MWh)
         latest_val_eur_mwh = df.dropna()["value"].iloc[-1]
-        # Umrechnung €/MWh in ct/kWh (durch 10 teilen)
         return round(latest_val_eur_mwh / 10.0, 2)
-    return 8.40  # Fallback-Wert falls API kurzzeitig offline
+    return 8.40  # Fallback-Wert
 
 # 3. TITEL & HEADER
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
@@ -53,10 +47,9 @@ st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bunde
 
 st.markdown("---")
 
-# 4. KENNZAHLEN / QUICK-FACTS (MIT LIVE-DATEN)
+# 4. KENNZAHLEN / QUICK-FACTS
 col1, col2, col3 = st.columns(3)
 
-# Live-Preis abrufen
 live_strompreis = get_latest_electricity_price()
 
 with col1:
@@ -83,12 +76,17 @@ with col3:
 
 st.markdown("---")
 
-# 5. GESTAPELTES BALKENDIAGRAMM (LOKAL VS. IMPORT)
+# 5. DYNAMISCHE DATUMS-BERECHNUNG FÜR DIE AKTUELLE WOCHE
+heute = datetime.date.today()
+montag = heute - datetime.timedelta(days=heute.weekday())
+wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+
+# Erzeugt eine Liste wie: ["Mo (20.07.)", "Di (21.07.)", "Mi (22.07.)", ...]
+tage = [(montag + datetime.timedelta(days=i)).strftime(f"{wochentage_kurz[i]} (%d.%m.)") for i in range(7)]
+
+# 6. GESTAPELTES BALKENDIAGRAMM (MIT DATUM)
 st.subheader("📊 Gemeinde-Erzeugung vs. Regionaler Netz-Import")
 st.write("Vergleich der lokalen Stromerzeugung (96114/96146) mit dem notwendigen Netzbezug von außen im Wochenverlauf:")
-
-# Beispieldaten für die Struktur (können stündlich über SMARD skaliert werden)
-tage = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
 erzeugung_data = {
     "Tag": tage,
@@ -97,7 +95,7 @@ erzeugung_data = {
     "🏡 Biomasse & Wasserkraft (Lokal)": [60, 60, 62, 61, 60, 59, 60],
     "🏡 Windkraft (Lokal)": [0, 0, 0, 0, 0, 0, 0],
     
-    # Block 2: REGIONALER NETZ-IMPORT (Live via SMARD Netzmix hochgerechnet)
+    # Block 2: REGIONALER NETZ-IMPORT
     "🌐 Netz-Import: Windkraft (Region)": [80, 60, 120, 170, 70, 40, 50],
     "🌐 Netz-Import: Fossile Reserven (Gas/Kohle)": [100, 110, 100, 120, 90, 40, 20],
     "🌐 Netz-Import: Ausland / Sonstige": [80, 60, 48, 84, 60, 22, 20]
@@ -138,7 +136,7 @@ fig.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#FFFFFF", size=13),
-    xaxis=dict(title="Wochentag", showgrid=False),
+    xaxis=dict(title="Wochentag / Datum", showgrid=False),
     yaxis=dict(title="MWh / Tag", showgrid=True, gridcolor="#2A3547"),
     legend=dict(orientation="h", yanchor="bottom", y=-0.5, xanchor="center", x=0.5),
     margin=dict(l=20, r=20, t=20, b=120)
@@ -146,8 +144,8 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 6. ERKLÄRBOX
+# 7. ERKLÄRBOX
 st.info("""
-**💡 Live-Anbindung aktiv:**
-Der Börsenstrompreis oben wird live von der offiziellen **SMARD.de-Schnittstelle der Bundesnetzagentur** abgerufen und alle 60 Minuten aktualisiert.
+**💡 Automatische Datumsaktualisierung:**
+Die Wochentage auf der X-Achse passen sich nun jeden Montag automatisch an das Datum der aktuellen Kalenderwoche an.
 """)
