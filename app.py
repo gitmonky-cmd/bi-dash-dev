@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
 # 1. SEITEN-LAYOUT EINSTELLEN
 st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
@@ -11,7 +11,7 @@ st.caption("Ein Service der Bürgerinitiative | Datenbasis: SMARD.de (Bundesnetz
 
 st.markdown("---")
 
-# 3. KENNZAHLEN / QUICK-FACTS (Karten mit beiden PLZ)
+# 3. KENNZAHLEN / QUICK-FACTS
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -38,54 +38,85 @@ with col3:
 
 st.markdown("---")
 
-# 4. LIVE-NETZMIX DIAGRAMM
-st.subheader("📊 Physikalisch-Bilanzielle Herkunft des Stroms im Netz")
-st.write("Aktuelle Schätzung für das Verteilnetzgebiet TenneT / Bayernwerk:")
+# 4. GESTAPELTES BALKENDIAGRAMM (AKTUELLE KALENDERWOCHE)
+st.subheader("📊 Stromerzeugung vs. Strombedarf der aktuellen Kalenderwoche")
+st.write("Vergleich der täglichen Erzeugungsquellen mit dem tatsächlichen Verbrauch (gemittelt in MWh/Tag):")
 
-# Datenmatrix
-mix_data = {
-    "Energieträger": [
-        "Photovoltaik (Solar)", 
-        "Windkraft", 
-        "Biomasse & Wasserkraft", 
-        "Fossile Reserven (Gas/Kohle)", 
-        "Strom-Importe (z.B. CZ)"
-    ],
-    "Anteil (%)": [25, 10, 20, 25, 20]
+# Beispieldaten für die Wochentage (Mo - So)
+tage = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+
+# Erzeugungsdaten in MWh (Gestapelte Balken)
+erzeugung_data = {
+    "Tag": tage,
+    "Photovoltaik (Solar)": [180, 220, 150, 90, 210, 250, 230],
+    "Windkraft": [60, 40, 110, 160, 50, 30, 40],
+    "Wasserkraft": [40, 40, 42, 41, 40, 39, 40],
+    "Biomasse": [50, 50, 50, 50, 50, 50, 50],
+    "Kernkraft": [0, 0, 0, 0, 0, 0, 0], # In D abgeschaltet, aber als Kategorie vorbereitet
+    "Fossile (Gas/Kohle)": [120, 110, 130, 170, 110, 80, 70],
+    "Strom-Importe": [80, 60, 90, 110, 70, 40, 30]
 }
-df = pd.DataFrame(mix_data)
 
-# Farbzuordnung
+# Strombedarf / Lastprofil (Rote Kurve)
+strombedarf = [500, 510, 520, 525, 490, 410, 380]
+
+df_erzeugung = pd.DataFrame(erzeugung_data)
+
+# Erstellen des Plotly-Diagramms mit doppelter Darstellung (Balken + Linie)
+fig = go.Figure()
+
+# Farben nach Energiemonitor-Logik definieren
 farben = {
-    "Photovoltaik (Solar)": "#FFD600",
-    "Windkraft": "#00E5FF",
-    "Biomasse & Wasserkraft": "#00E676",
-    "Fossile Reserven (Gas/Kohle)": "#FF9100",
-    "Strom-Importe (z.B. CZ)": "#FF1744"
+    "Photovoltaik (Solar)": "#FFD600",      # Sonnengelb
+    "Windkraft": "#00E5FF",                 # Hellblau
+    "Wasserkraft": "#00B0FF",               # Blau
+    "Biomasse": "#00E676",                  # Grün
+    "Kernkraft": "#AA00FF",                 # Violett
+    "Fossile (Gas/Kohle)": "#FF9100",       # Orange
+    "Strom-Importe": "#D500F9"              # Magenta/Pink
 }
 
-fig = px.pie(
-    df, 
-    values="Anteil (%)", 
-    names="Energieträger", 
-    color="Energieträger",
-    color_discrete_map=farben,
-    hole=0.4
-)
+# Gestapelte Balken hinzufügen
+for spalte, farbe in farben.items():
+    fig.add_trace(go.Bar(
+        x=df_erzeugung["Tag"],
+        y=df_erzeugung[spalte],
+        name=spalte,
+        marker_color=farbe
+    ))
 
-# Dark Mode Layout
+# Rote Kurve für den Strombedarf hinzufügen
+fig.add_trace(go.Scatter(
+    x=tage,
+    y=strombedarf,
+    name="Strombedarf (Last)",
+    line=dict(color="#FF1744", width=4), # Rote Linie
+    mode="lines+markers"
+))
+
+# Layout anpassen (Dark Mode & Gestapelt)
 fig.update_layout(
+    barmode="stack", # Macht aus den Balken gestapelte Säulen
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#FFFFFF", size=14),
-    legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
+    font=dict(color="#FFFFFF", size=13),
+    xaxis=dict(title="Wochentag", showgrid=False),
+    yaxis=dict(title="MWh / Tag", showgrid=True, gridcolor="#2A3547"),
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=-0.4,
+        xanchor="center",
+        x=0.5
+    ),
+    margin=dict(l=20, r=20, t=20, b=100)
 )
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 5. HINWEISBOX
+# 5. ERKLÄRBOX
 st.info("""
-**💡 Der System-Realitäts-Check für Hirschaid & Altendorf:**
-Der offizielle *Energie Monitor Bayern* zeigt primär die rein bilanzielle Erzeugung vor Ort. 
-Dieses Dashboard ergänzt die blinden Flecken: **Abregelungen von Ökostrom (Redispatch)** und die **tatsächliche Herkunft des Importstroms**, wenn lokal die Sonne nicht scheint.
+**💡 Wie liest man dieses Diagramm?**
+* **Balkenhöhe > Rote Linie:** Es entsteht ein **regionaler Stromüberschuss** (meist an sonnigen/windigen Tagen). Der Strom muss exportiert oder abgeregelt werden.
+* **Balkenhöhe < Rote Linie:** Es liegt eine **Deckungslücke** vor, die durch fossile Reserven oder Strom-Importe gefüllt werden muss.
 """)
