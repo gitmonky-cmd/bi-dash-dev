@@ -81,7 +81,6 @@ with col3:
 
 st.markdown("---")
 
-# Dynamische Datumsberechnung für die aktuelle Woche (Mo - So)
 heute = datetime.date.today()
 montag = heute - datetime.timedelta(days=heute.weekday())
 wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
@@ -129,7 +128,6 @@ fig1.add_trace(go.Scatter(
     line=dict(color="#FF1744", width=4), mode="lines+markers"
 ))
 
-# OPTIMIERUNG DER ABSTÄNDE FÜR MOBIL- & HOCHFORMAT-ANSICHT
 fig1.update_layout(
     barmode="stack", 
     paper_bgcolor="rgba(0,0,0,0)", 
@@ -138,7 +136,7 @@ fig1.update_layout(
     xaxis=dict(
         title=dict(
             text="Wochentag / Datum",
-            standoff=25  # Schiebt die Schrift Wochentag/Datum nach unten
+            standoff=25
         ), 
         showgrid=False
     ),
@@ -146,24 +144,24 @@ fig1.update_layout(
     legend=dict(
         orientation="h", 
         yanchor="top", 
-        y=-0.45,  # Zieht die Legende unter den Achsentitel
+        y=-0.45, 
         xanchor="center", 
         x=0.5
     ),
-    margin=dict(l=20, r=20, t=20, b=180)  # Vergrößert den unteren Puffer deutlich
+    margin=dict(l=20, r=20, t=20, b=180)
 )
 
 st.plotly_chart(fig1, use_container_width=True)
 
 
 # =============================================================================
-# DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD (GEMEINDEGETRENNT)
+# DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD (MIT REGIONALEM VERGLEICH)
 # =============================================================================
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
 st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Potenziale")
-st.caption("Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahresverlauf")
+st.caption("Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahres- und Regionalvergleich")
 
 m1, m2, m3 = st.columns(3)
 
@@ -171,7 +169,8 @@ with m1:
     st.markdown("**Rechnerischer Jahres-Autarkiegrad**")
     st.write("• **Hirschaid:** 41,2 %")
     st.write("• **Altendorf:** 48,5 %")
-    st.caption("Durchschnitt gesamt: 42,5 %")
+    st.write("• **Landkreis Bamberg (alle Kommunen):** ca. 34,8 %")
+    st.caption("Lokaler Durchschnitt (Hirschaid & Altendorf): 42,5 %")
 
 with m2:
     st.markdown("**Geschätzte CO₂-Ersparnis vor Ort**")
@@ -192,18 +191,20 @@ st.subheader("📈 Monatlicher Eigenversorgungsgrad (%) im Vergleich")
 monate = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
 autarkie_hirschaid = [14, 21, 37, 53, 66, 72, 70, 63, 46, 29, 17, 11]
 autarkie_altendorf = [18, 26, 42, 61, 74, 81, 78, 71, 54, 34, 21, 15]
+autarkie_lk_bamberg = [10, 16, 29, 44, 55, 60, 58, 52, 38, 23, 13, 8]
 
 df_autarkie_vergleich = pd.DataFrame({
     "Monat": monate,
     "Hirschaid (%)": autarkie_hirschaid,
-    "Altendorf (%)": autarkie_altendorf
+    "Altendorf (%)": autarkie_altendorf,
+    "Landkreis Bamberg (%)": autarkie_lk_bamberg
 })
 
 fig_area = px.line(
     df_autarkie_vergleich, 
     x="Monat", 
-    y=["Hirschaid (%)", "Altendorf (%)"],
-    color_discrete_sequence=["#FFD600", "#00E676"]
+    y=["Hirschaid (%)", "Altendorf (%)", "Landkreis Bamberg (%)"],
+    color_discrete_sequence=["#FFD600", "#00E676", "#00B0FF"]
 )
 fig_area.add_hline(y=100, line_dash="dash", line_color="#FF1744", annotation_text="100% Autarkie-Ziel")
 fig_area.update_layout(
@@ -266,12 +267,12 @@ with col_pie_r:
     )
     st.plotly_chart(fig_donut_a, use_container_width=True)
 
-# Klarstellende Hinweisbox zur Geografie
+# BEGRIFFS-DEFINITIONSBOX FÜR DIE BÜRGER
 st.info("""
-**🗺️ Hinweis zur regionalen Arbeitsteilung:**  
-Auf den Gemeindegebieten Hirschaid & Altendorf stehen aufgrund von Siedlungsstruktur, Abstandsflächen und Schutzgebieten **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. 
-
-Die örtliche Energiewende setzt daher konsequent auf die Nutzung von **Photovoltaik auf Dächern und Freiflächen sowie Wasserkraft an der Regnitz**. Windstrom fließt bedarfsgerecht über das regionale Bayernwerk-Netz aus Nachbarregionen zu.
+**🗺️ Begriffsklärung & Regionale Arbeitsteilung:**  
+* **Was bedeutet \"Region\"?** Die Region umfasst primär das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie angrenzenden Teilen der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
+* **Woher stammt der Netz-Import (Windenergie)?** Dieser Strom speist sich aus Windkraftanlagen umliegender Gemeinden des Landkreises Bamberg sowie aus benachbarten Landkreisen (z. B. Forchheim, Lichtenfels, Bayreuth), die direkt in das gemeinsame Verteilnetz einspeisen.
+* **Geografische Realität vor Ort:** Auf den Gemeindegebieten von Hirschaid & Altendorf stehen aufgrund von Siedlungsdichte, Schutzgebieten und Abstandsflächen **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. Die beiden Gemeinden tragen ihren Beitrag zur Energiewende über überdurchschnittlich viele **PV-Dach- und Freiflächenanlagen sowie Wasserkraft an der Regnitz** bei.
 """)
 
 # =============================================================================
