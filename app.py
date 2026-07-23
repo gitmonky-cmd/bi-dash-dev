@@ -59,11 +59,10 @@ col1, col2, col3 = st.columns(3)
 live_strompreis = get_latest_electricity_price()
 
 with col1:
-    st.metric(
-        label="Installierte PV-Leistung (96114 & 96146)", 
-        value="45,2 MWp", 
-        delta="Dächer & Freiflächen"
-    )
+    st.markdown("**Installierte PV-Leistung (MWp)**")
+    st.write("• **Hirschaid (96114):** 36,8 MWp")
+    st.write("• **Altendorf (96146):** 8,4 MWp")
+    st.caption("Gesamt: 45,2 MWp (Dächer & Freiflächen)")
 
 with col2:
     st.metric(
@@ -101,7 +100,6 @@ else:
     base_pv = [180, 220, 150, 90, 210, 250, 230]
     base_load = [500, 510, 520, 525, 490, 410, 380]
 
-# Klares Farbschema ohne irreführende Nulllinien
 erzeugung_data = {
     "Tag": tage,
     "🏡 Photovoltaik (Lokal 96114/96146)": base_pv,
@@ -142,7 +140,7 @@ st.plotly_chart(fig1, use_container_width=True)
 
 
 # -----------------------------------------------------------------------------
-# DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD
+# DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD (GEMEINDEGETRENNT)
 # -----------------------------------------------------------------------------
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
@@ -151,49 +149,112 @@ st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Potenziale")
 st.caption("Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahresverlauf")
 
 m1, m2, m3 = st.columns(3)
+
 with m1:
-    st.metric(label="Rechnerischer Jahres-Autarkiegrad", value="42,5 %", delta="+3,1% vs. Vorjahr")
+    st.markdown("**Rechnerischer Jahres-Autarkiegrad**")
+    st.write("• **Hirschaid:** 41,2 %")
+    st.write("• **Altendorf:** 48,5 %")
+    st.caption("Durchschnitt gesamt: 42,5 %")
+
 with m2:
-    st.metric(label="Geschätzte CO₂-Ersparnis vor Ort", value="14.200 t", delta="Durch PV & Wasser")
+    st.markdown("**Geschätzte CO₂-Ersparnis vor Ort**")
+    st.write("• **Hirschaid:** 11.500 t / Jahr")
+    st.write("• **Altendorf:** 2.700 t / Jahr")
+    st.caption("Gesamt: 14.200 t durch PV & Wasser")
+
 with m3:
-    st.metric(label="Registrierte PV-Anlagen (MaStR)", value="1.480 Einheiten", delta="Dächer & Freiflächen")
+    st.markdown("**Registrierte PV-Anlagen (MaStR)**")
+    st.write("• **Hirschaid:** 1.220 Einheiten")
+    st.write("• **Altendorf:** 260 Einheiten")
+    st.caption("Gesamt: 1.480 registrierte Anlagen")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-col_left, col_right = st.columns([3, 2])
+# 1. Monatlicher Autarkie-Verlauf
+st.subheader("📈 Monatlicher Eigenversorgungsgrad (%) im Vergleich")
+monate = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+autarkie_hirschaid = [14, 21, 37, 53, 66, 72, 70, 63, 46, 29, 17, 11]
+autarkie_altendorf = [18, 26, 42, 61, 74, 81, 78, 71, 54, 34, 21, 15]
 
-with col_left:
-    st.subheader("📈 Monatlicher Eigenversorgungsgrad (%)")
-    monate = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
-    autarkie_prozent = [15, 22, 38, 55, 68, 74, 72, 65, 48, 30, 18, 12]
-    
-    df_autarkie = pd.DataFrame({"Monat": monate, "Autarkiegrad (%)": autarkie_prozent})
-    fig_area = px.area(df_autarkie, x="Monat", y="Autarkiegrad (%)", color_discrete_sequence=["#00E676"])
-    fig_area.add_hline(y=100, line_dash="dash", line_color="#FF1744", annotation_text="100% Autarkie-Ziel")
-    fig_area.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#FFFFFF", size=13), yaxis=dict(range=[0, 110], gridcolor="#2A3547"), xaxis=dict(showgrid=False)
-    )
-    st.plotly_chart(fig_area, use_container_width=True)
+df_autarkie_vergleich = pd.DataFrame({
+    "Monat": monate,
+    "Hirschaid (%)": autarkie_hirschaid,
+    "Altendorf (%)": autarkie_altendorf
+})
 
-with col_right:
-    st.subheader("☀️ Lokale Erzeugungsstruktur")
-    pv_typ_data = {
-        "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
-        "Leistung (MWp / MW)": [18.2, 12.0, 15.0, 2.5]
-    }
-    df_pv = pd.DataFrame(pv_typ_data)
-    fig_donut = px.pie(df_pv, values="Leistung (MWp / MW)", names="Anlagentyp", hole=0.5, color_discrete_sequence=["#FFD600", "#FF9100", "#00B0FF", "#00E676"])
-    fig_donut.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#FFFFFF", size=13), legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
+fig_area = px.line(
+    df_autarkie_vergleich, 
+    x="Monat", 
+    y=["Hirschaid (%)", "Altendorf (%)"],
+    color_discrete_sequence=["#FFD600", "#00E676"]
+)
+fig_area.add_hline(y=100, line_dash="dash", line_color="#FF1744", annotation_text="100% Autarkie-Ziel")
+fig_area.update_layout(
+    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#FFFFFF", size=13), yaxis=dict(range=[0, 110], gridcolor="#2A3547"), xaxis=dict(showgrid=False),
+    legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
+)
+st.plotly_chart(fig_area, use_container_width=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# 2. Lokale Erzeugungsstruktur: 2 Pie-Charts getrennt für Hirschaid & Altendorf
+st.subheader("☀️ Lokale Erzeugungsstruktur im Vergleich")
+
+col_pie_l, col_pie_r = st.columns(2)
+
+# Daten Hirschaid
+pv_hirschaid = {
+    "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
+    "Leistung (MWp / MW)": [14.8, 10.5, 11.5, 2.0]
+}
+df_hirschaid = pd.DataFrame(pv_hirschaid)
+
+# Daten Altendorf
+pv_altendorf = {
+    "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
+    "Leistung (MWp / MW)": [3.4, 1.5, 3.5, 0.5]
+}
+df_altendorf = pd.DataFrame(pv_altendorf)
+
+farben_pie = ["#FFD600", "#FF9100", "#00B0FF", "#00E676"]
+
+with col_pie_l:
+    st.markdown("##### 🏰 Hirschaid (96114)")
+    fig_donut_h = px.pie(
+        df_hirschaid, 
+        values="Leistung (MWp / MW)", 
+        names="Anlagentyp", 
+        hole=0.4, 
+        color_discrete_sequence=farben_pie
     )
-    st.plotly_chart(fig_donut, use_container_width=True)
+    fig_donut_h.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#FFFFFF", size=12),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5)
+    )
+    st.plotly_chart(fig_donut_h, use_container_width=True)
+
+with col_pie_r:
+    st.markdown("##### 🏡 Altendorf (96146)")
+    fig_donut_a = px.pie(
+        df_altendorf, 
+        values="Leistung (MWp / MW)", 
+        names="Anlagentyp", 
+        hole=0.4, 
+        color_discrete_sequence=farben_pie
+    )
+    fig_donut_a.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#FFFFFF", size=12),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5)
+    )
+    st.plotly_chart(fig_donut_a, use_container_width=True)
 
 # KLARSTELLENDE HINWEISBOX ZUR GEOGRAFIE
 st.info("""
 **🗺️ Hinweis zur regionalen Arbeitsteilung:**  
-Auf dem Gemeindegebiet Hirschaid & Altendorf stehen aufgrund von Siedlungsstruktur, Abstandsflächen und Schutzgebieten **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. 
+Auf den Gemeindegebieten Hirschaid & Altendorf stehen aufgrund von Siedlungsstruktur, Abstandsflächen und Schutzgebieten **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. 
 
 Die örtliche Energiewende setzt daher konsequent auf die Nutzung von **Photovoltaik auf Dächern und Freiflächen sowie Wasserkraft an der Regnitz**. Windstrom fließt bedarfsgerecht über das regionale Bayernwerk-Netz aus Nachbarregionen zu.
 """)
