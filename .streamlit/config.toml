@@ -1,8 +1,10 @@
 [theme]
-primaryColor="#007bff"
-backgroundColor="#ffffff"
-secondaryBackgroundColor="#f8f9fa"
-textColor="#212529"
+base = "dark"
+primaryColor = "#00D1B2"                  # Helles Türkis/Grün (wie Bayernwerk)
+backgroundColor = "#121824"               # Dunkles Anthrazit/Blau-Schwarz
+secondaryBackgroundColor = "#1E2738"      # Etwas helleres Dunkelgrau für Karten/Boxen
+textColor = "#FFFFFF"                     # Reinweiße Schrift
+font = "sans serif"
 
 [client]
 toolbarMode = "minimal"
