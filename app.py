@@ -23,9 +23,10 @@ with col1:
 
 with col2:
     st.metric(
-        label="Börsenstrompreis (EPEX Spot)", 
-        value="8,4 ct/kWh", 
-        delta="Inland-Großhandel"
+        label="Lokale Windleistung auf Gemeindegebiet", 
+        value="0,0 MW", 
+        delta="Keine WKA vor Ort",
+        delta_color="off"
     )
 
 with col3:
@@ -38,45 +39,52 @@ with col3:
 
 st.markdown("---")
 
-# 4. GESTAPELTES BALKENDIAGRAMM (AKTUELLE KALENDERWOCHE)
-st.subheader("📊 Stromerzeugung vs. Strombedarf der aktuellen Kalenderwoche")
-st.write("Vergleich der täglichen Erzeugungsquellen mit dem tatsächlichen Verbrauch (gemittelt in MWh/Tag):")
+# 4. GESTAPELTES BALKENDIAGRAMM (LOKAL VS. IMPORT)
+st.subheader("📊 Gemeinde-Erzeugung vs. Regionaler Netz-Import")
+st.write("Vergleich der lokalen Stromerzeugung (96114/96146) mit dem notwendigen Netzbezug von außen im Wochenverlauf:")
 
 # Beispieldaten für die Wochentage (Mo - So)
 tage = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
-# Erzeugungsdaten in MWh (Gestapelte Balken)
+# Erzeugungsdaten in MWh (Gestapelte Säulen)
+# WICHTIG: Lokale Windkraft ist exakt 0,0 MWh!
 erzeugung_data = {
     "Tag": tage,
-    "Photovoltaik (Solar)": [180, 220, 150, 90, 210, 250, 230],
-    "Windkraft": [60, 40, 110, 160, 50, 30, 40],
-    "Wasserkraft": [40, 40, 42, 41, 40, 39, 40],
-    "Biomasse": [50, 50, 50, 50, 50, 50, 50],
-    "Kernkraft": [0, 0, 0, 0, 0, 0, 0], # In D abgeschaltet, aber als Kategorie vorbereitet
-    "Fossile (Gas/Kohle)": [120, 110, 130, 170, 110, 80, 70],
-    "Strom-Importe": [80, 60, 90, 110, 70, 40, 30]
+    # Block 1: ECHTE LOKALE ERZEUGUNG (Gemeindegebiet Hirschaid & Altendorf)
+    "🏡 Photovoltaik (Lokal 96114/96146)": [180, 220, 150, 90, 210, 250, 230],
+    "🏡 Biomasse & Wasserkraft (Lokal)": [60, 60, 62, 61, 60, 59, 60],
+    "🏡 Windkraft (Lokal)": [0, 0, 0, 0, 0, 0, 0],
+    
+    # Block 2: REGIONALER NETZ-IMPORT (Aus dem Bayernwerk/TenneT-Netz zugeflossen)
+    "🌐 Netz-Import: Windkraft (Region)": [80, 60, 120, 170, 70, 40, 50],
+    "🌐 Netz-Import: Fossile Reserven (Gas/Kohle)": [100, 110, 100, 120, 90, 40, 20],
+    "🌐 Netz-Import: Ausland / Sonstige": [80, 60, 48, 84, 60, 22, 20]
 }
 
-# Strombedarf / Lastprofil (Rote Kurve)
+# Strombedarf / Lastprofil der beiden Gemeinden (Rote Kurve)
 strombedarf = [500, 510, 520, 525, 490, 410, 380]
 
 df_erzeugung = pd.DataFrame(erzeugung_data)
 
-# Erstellen des Plotly-Diagramms mit doppelter Darstellung (Balken + Linie)
+# Erstellen des Plotly-Diagramms
 fig = go.Figure()
 
-# Farben nach Energiemonitor-Logik definieren
+# Farbschema zur klaren optischen Trennung:
+# Warme / Grüne Töne = Lokale Erzeugung
+# Kühle / Violette / Graue Töne = Netz-Import
 farben = {
-    "Photovoltaik (Solar)": "#FFD600",      # Sonnengelb
-    "Windkraft": "#00E5FF",                 # Hellblau
-    "Wasserkraft": "#00B0FF",               # Blau
-    "Biomasse": "#00E676",                  # Grün
-    "Kernkraft": "#AA00FF",                 # Violett
-    "Fossile (Gas/Kohle)": "#FF9100",       # Orange
-    "Strom-Importe": "#D500F9"              # Magenta/Pink
+    # Lokaler Block
+    "🏡 Photovoltaik (Lokal 96114/96146)": "#FFD600",         # Leuchtendes Sonnengelb
+    "🏡 Biomasse & Wasserkraft (Lokal)": "#00E676",             # Echtes Naturgrün
+    "🏡 Windkraft (Lokal)": "#37474F",                        # Dunkelgrau (da 0 MWh)
+    
+    # Import Block
+    "🌐 Netz-Import: Windkraft (Region)": "#00E5FF",            # Cyan / Hellblau
+    "🌐 Netz-Import: Fossile Reserven (Gas/Kohle)": "#FF9100",  # Orange
+    "🌐 Netz-Import: Ausland / Sonstige": "#D500F9"             # Magenta/Pink
 }
 
-# Gestapelte Balken hinzufügen
+# Säulen stapeln
 for spalte, farbe in farben.items():
     fig.add_trace(go.Bar(
         x=df_erzeugung["Tag"],
@@ -85,18 +93,18 @@ for spalte, farbe in farben.items():
         marker_color=farbe
     ))
 
-# Rote Kurve für den Strombedarf hinzufügen
+# Rote Kurve für den Strombedarf (Lastprofil Hirschaid & Altendorf)
 fig.add_trace(go.Scatter(
     x=tage,
     y=strombedarf,
-    name="Strombedarf (Last)",
-    line=dict(color="#FF1744", width=4), # Rote Linie
+    name="🔻 Strombedarf (Hirschaid & Altendorf)",
+    line=dict(color="#FF1744", width=4),
     mode="lines+markers"
 ))
 
-# Layout anpassen (Dark Mode & Gestapelt)
+# Layout-Anpassung (Dark Mode & Visuelle Trennung)
 fig.update_layout(
-    barmode="stack", # Macht aus den Balken gestapelte Säulen
+    barmode="stack",
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#FFFFFF", size=13),
@@ -105,18 +113,18 @@ fig.update_layout(
     legend=dict(
         orientation="h",
         yanchor="bottom",
-        y=-0.4,
+        y=-0.5,
         xanchor="center",
         x=0.5
     ),
-    margin=dict(l=20, r=20, t=20, b=100)
+    margin=dict(l=20, r=20, t=20, b=120)
 )
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 5. ERKLÄRBOX
+# 5. KLARSTELLENDE ERKLÄRBOX
 st.info("""
-**💡 Wie liest man dieses Diagramm?**
-* **Balkenhöhe > Rote Linie:** Es entsteht ein **regionaler Stromüberschuss** (meist an sonnigen/windigen Tagen). Der Strom muss exportiert oder abgeregelt werden.
-* **Balkenhöhe < Rote Linie:** Es liegt eine **Deckungslücke** vor, die durch fossile Reserven oder Strom-Importe gefüllt werden muss.
+**💡 Der Unterschied auf einen Blick:**
+* **🏡 Gelbe & Grüne Abschnitte:** Strom, der **direkt auf dem Gemeindegebiet** von Hirschaid und Altendorf erzeugt wurde. *(Hinweis: Windkraft vor Ort ist exakt 0 MW).*
+* **🌐 Blaue & Violette Abschnitte:** Strom, der über das Bayernwerk-Netz aus Nachbargemeinden oder dem Ausland **importiert werden musste**, um die Deckungslücke zur roten Linie zu schließen.
 """)
