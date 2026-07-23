@@ -8,7 +8,7 @@ import plotly.express as px
 # 1. SEITEN-LAYOUT EINSTELLEN
 st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
 
-# 2. SMARD.DE API INTEGRATION
+# 2. HELFER-FUNKTIONEN FÜR DIE SMARD.DE API (MIT CACHING)
 @st.cache_data(ttl=3600)
 def fetch_smard_series(filter_id, region="DE"):
     """Holt Zeitreihendaten von SMARD.de"""
@@ -33,7 +33,7 @@ def fetch_smard_series(filter_id, region="DE"):
 
 @st.cache_data(ttl=1800)
 def get_latest_electricity_price():
-    """Börsenstrompreis live laden"""
+    """Börsenstrompreis live laden (mit Plausibilitätscheck)"""
     try:
         df = fetch_smard_series(filter_id="410")
         if df is not None and not df.empty:
@@ -46,9 +46,9 @@ def get_latest_electricity_price():
         pass
     return 8.40
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # DASHBOARD 1: LOKALER WOCHENVERLAUF & LIVE-STATUS
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
 st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
@@ -81,6 +81,7 @@ with col3:
 
 st.markdown("---")
 
+# Dynamische Datumsberechnung für die aktuelle Woche (Mo - So)
 heute = datetime.date.today()
 montag = heute - datetime.timedelta(days=heute.weekday())
 wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
@@ -139,9 +140,9 @@ fig1.update_layout(
 st.plotly_chart(fig1, use_container_width=True)
 
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD (GEMEINDEGETRENNT)
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
@@ -203,14 +204,12 @@ st.subheader("☀️ Lokale Erzeugungsstruktur im Vergleich")
 
 col_pie_l, col_pie_r = st.columns(2)
 
-# Daten Hirschaid
 pv_hirschaid = {
     "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
     "Leistung (MWp / MW)": [14.8, 10.5, 11.5, 2.0]
 }
 df_hirschaid = pd.DataFrame(pv_hirschaid)
 
-# Daten Altendorf
 pv_altendorf = {
     "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
     "Leistung (MWp / MW)": [3.4, 1.5, 3.5, 0.5]
@@ -251,7 +250,7 @@ with col_pie_r:
     )
     st.plotly_chart(fig_donut_a, use_container_width=True)
 
-# KLARSTELLENDE HINWEISBOX ZUR GEOGRAFIE
+# Klarstellende Hinweisbox zur Geografie
 st.info("""
 **🗺️ Hinweis zur regionalen Arbeitsteilung:**  
 Auf den Gemeindegebieten Hirschaid & Altendorf stehen aufgrund von Siedlungsstruktur, Abstandsflächen und Schutzgebieten **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. 
@@ -259,9 +258,9 @@ Auf den Gemeindegebieten Hirschaid & Altendorf stehen aufgrund von Siedlungsstru
 Die örtliche Energiewende setzt daher konsequent auf die Nutzung von **Photovoltaik auf Dächern und Freiflächen sowie Wasserkraft an der Regnitz**. Windstrom fließt bedarfsgerecht über das regionale Bayernwerk-Netz aus Nachbarregionen zu.
 """)
 
-# -----------------------------------------------------------------------------
-# DASHBOARD 3: FINANZEN & REGIONALE WERTSCHÖPFUNG
-# -----------------------------------------------------------------------------
+# =============================================================================
+# DASHBOARD 3: FINANZEN, WERTSCHÖPFUNG & VERTEILUNGS-ANALYSE
+# =============================================================================
 
 st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
@@ -331,4 +330,24 @@ with col_fin_r:
     * **EEG-Einspeisevergütung:** Fleißige Einnahmequelle für Dachanlagen-Besitzer, Landwirte und Gewerbebetriebe in 96114 & 96146. Jährlich fließen rund **4,8 Mio. €** an Netzbetreiber-Auszahlungen direkt zurück in die Region.
     * **CO₂-Abgabe (BEHG):** Bei rund 14.600 Einwohnern fließen geschätzt **1,7 Mio. € pro Jahr** über die CO₂-Bepreisung für Fossile (Gas, Öl, Sprit) an den bundesweiten Klima- und Transformationsfonds (KTF) ab.
     * **Fazit:** Jeder Megawattpeak an neuer PV-Leistung vor Ort vergrößert diesen positiven Saldo und hält die Wertschöpfung in Hirschaid & Altendorf!
+    """)
+
+# Ergänzung: Verteilungs-Analyse (Wer zahlt vs. Wer empfängt)
+st.markdown("---")
+st.subheader("👥 Verteilungseffekt vor Ort: Wer zahlt, wer profitiert?")
+
+col_vert_l, col_vert_r = st.columns(2)
+
+with col_vert_l:
+    st.info("""
+    **🟥 CO₂-Kostenabfluss (Breite Belastung):**
+    * **Wer zahlt?** Nahezu **100 % der Bevölkerung** (ca. 14.600 Einwohner in Hirschaid & Altendorf) über Miet-Nebenkosten, Erdgas-, Heizöl-, Benzin- und Dieselrechnungen.
+    * **Pro-Kopf-Belastung:** ca. **115 € pro Einwohner / Jahr**, die direkt an den Bund (KTF) abfließen.
+    """)
+
+with col_vert_r:
+    st.success("""
+    **🟩 EEG-Einnahmen (Konzentrierte Vergütung):**
+    * **Wer empfängt?** Ca. **1.200 private Anlagenbetreiber, Landwirte und Unternehmen** (ca. 8–10 % der Haushalte), die in PV, Wasserkraft oder Biomasse investiert haben.
+    * **Pro-Betreiber-Einnahme:** Durchschnittlich ca. **3.800 bis 4.000 € / Jahr** an gesetzlicher Vergütung.
     """)
