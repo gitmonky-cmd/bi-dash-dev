@@ -572,3 +572,113 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.warning("""
 **📌 Politische Kernaussage für Ratsentscheidungen:** Auf den Dächern in Hirschaid und Altendorf liegen aktuell noch **über 24 MWp an ungenutzter Leistung** brach. Solange dieses enorme Potenzial auf bereits versiegelten Wohn-, Landwirtschafts- und Gewerbedächern nicht durch gezielte Anreize ausgeschöpft ist, besteht **kein sachlicher Notstand für die Umwandlung wertvoller Ackerflächen** in Freiflächen-PV-Anlagen.
 """)
+
+# =============================================================================
+# DASHBOARD 5: PRIVILEGIERTE FREIFLÄCHEN & INFRASTRUKTUR-POTENZIAL
+# =============================================================================
+
+st.markdown(
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
+)
+
+st.header(
+    "5️⃣ Potenzial privilegierter Flächen (A73, Bahnlinie & RMD-Kanal)"
+)
+st.caption(
+    "Analyse der vorbelasteten 200m-Seitenstreifen (§ 37 EEG) und"
+    " Infrastrukturkorridore in Hirschaid & Altendorf im Vergleich zu freien"
+    " Ackerflächen"
+)
+
+# 1. Datenbasis für privilegierte Korridore
+kategorien_priv = [
+    "A73 Seitenstreifen (200m)",
+    "Bahnlinie (Nbg-Bamberg)",
+    "RMD-Kanal & Baggerseen",
+]
+belegt_mwp = [11.5, 3.5, 0.0]  # Bereits installierte Leistung (MWp)
+frei_mwp = [10.5, 7.5, 5.5]  # Noch ungenutztes Potenzial (MWp)
+
+df_priv = pd.DataFrame({
+    "Korridor": kategorien_priv,
+    "Bereits genutzt (MWp)": belegt_mwp,
+    "Freies Potenzial (MWp)": frei_mwp,
+})
+
+# 2. Plotly Visualisierung (Gestapelte horizontale Säulen)
+fig_priv = go.Figure()
+
+fig_priv.add_trace(
+    go.Bar(
+        y=df_priv["Korridor"],
+        x=df_priv["Bereits genutzt (MWp)"],
+        name="Bereits installiert (IST)",
+        orientation="h",
+        marker_color="#00B0FF",
+        hovertemplate="%{y}: %{x:.1f} MWp am Netz<extra></extra>",
+    )
+)
+
+fig_priv.add_trace(
+    go.Bar(
+        y=df_priv["Korridor"],
+        x=df_priv["Freies Potenzial (MWp)"],
+        name="Ungenutztes bevorzugtes Potenzial (Frei)",
+        orientation="h",
+        marker_color="#2A3547",
+        hovertemplate="%{y}: %{x:.1f} MWp ungenutzt<extra></extra>",
+    )
+)
+
+fig_priv.update_layout(
+    barmode="stack",
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#FFFFFF", size=13),
+    xaxis=dict(
+        title="Potenzial in Megawatt-Peak (MWp)",
+        showgrid=True,
+        gridcolor="#2A3547",
+    ),
+    yaxis=dict(showgrid=False),
+    legend=dict(
+        orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
+    ),
+    margin=dict(l=20, r=20, t=20, b=80),
+)
+
+st.plotly_chart(fig_priv, use_container_width=True)
+
+# Key Metrics für die Argumentation
+pr1, pr2, pr3 = st.columns(3)
+
+with pr1:
+    st.metric(
+        label="Gesamtpotenzial Privilegierte Flächen",
+        value="38.5 MWp",
+        delta="A73, Bahn & Kanal-Bereiche",
+    )
+
+with pr2:
+    st.metric(
+        label="Davon ungenutzt & vorrangig",
+        value="23.5 MWp",
+        delta="Kein Ackerland-Verbrauch nötig",
+        delta_color="off",
+    )
+
+with pr3:
+    st.metric(
+        label="Dach + Privilegiert Gesamt-Frei",
+        value="47.7 MWp",
+        delta="24.2 MWp Dächer + 23.5 MWp Korridore",
+    )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+st.info("""
+**⚖️ Baurechtliche & Strategische Einordnung:**
+* **Vorrang des Außenbereichs (§ 35 BauGB / § 37 EEG):** Der Gesetzgeber hat bewusst geregelt, dass Freiflächen-PV primär auf **vorbelasteten Flächen** (Entlang von Autobahnen, zweigleisigen Schienenwegen, Konversionsflächen und Baggerseen) errichtet werden soll.
+* **Kernaussage für den Marktgemeinderat:** Zusammen mit den ungenutzten Dachflächen (**24,2 MWp**) stehen auf dem Gemeindegebiet von Hirschaid und Altendorf noch knapp **48 MWp an vorrangigen PV-Potenzialen** zur Verfügung. Das Entziehen fruchtbarer landwirtschaftlicher Böden außerhalb dieser Korridore ist somit städtebaulich und ökologisch nicht begründbar.
+""")
