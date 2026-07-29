@@ -1,13 +1,12 @@
-import datetime
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import requests
 import streamlit as st
+import pandas as pd
+import requests
+import datetime
+import plotly.graph_objects as go
+import plotly.express as px
 
 # 1. SEITEN-LAYOUT EINSTELLEN
 st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
-
 
 # 2. HELFER-FUNKTIONEN FÜR DIE SMARD.DE API (MIT CACHING)
 @st.cache_data(ttl=3600)
@@ -18,7 +17,7 @@ def fetch_smard_series(filter_id, region="DE"):
         res_index = requests.get(index_url, timeout=5)
         if res_index.status_code != 200:
             return None
-
+        
         latest_timestamp = res_index.json()["timestamps"][-1]
         data_url = f"https://www.smard.de/app/chart_data/{filter_id}/{region}/{filter_id}_{region}_hour_{latest_timestamp}.json"
         res_data = requests.get(data_url, timeout=5)
@@ -31,7 +30,6 @@ def fetch_smard_series(filter_id, region="DE"):
         return df
     except Exception:
         return None
-
 
 @st.cache_data(ttl=1800)
 def get_latest_electricity_price():
@@ -48,15 +46,12 @@ def get_latest_electricity_price():
         pass
     return 8.40
 
-
 # =============================================================================
 # DASHBOARD 1: LOKALER WOCHENVERLAUF & LIVE-STATUS
 # =============================================================================
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
-st.caption(
-    "Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146"
-)
+st.caption("Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146")
 
 st.markdown("---")
 
@@ -71,17 +66,17 @@ with col1:
 
 with col2:
     st.metric(
-        label="Börsenstrompreis Live (EPEX Spot)",
-        value=f"{live_strompreis} ct/kWh",
-        delta="SMARD.de API",
+        label="Börsenstrompreis Live (EPEX Spot)", 
+        value=f"{live_strompreis} ct/kWh", 
+        delta="SMARD.de API"
     )
 
 with col3:
     st.metric(
-        label="Lokaler Fokus Erneuerbare",
-        value="PV & Wasserkraft",
+        label="Lokaler Fokus Erneuerbare", 
+        value="PV & Wasserkraft", 
         delta="Keine Wind-Eignungsflächen",
-        delta_color="off",
+        delta_color="off"
     )
 
 st.markdown("---")
@@ -89,23 +84,16 @@ st.markdown("---")
 heute = datetime.date.today()
 montag = heute - datetime.timedelta(days=heute.weekday())
 wochentage_kurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-tage = [
-    (montag + datetime.timedelta(days=i)).strftime(f"{wochentage_kurz[i]} (%d.%m.)")
-    for i in range(7)
-]
+tage = [(montag + datetime.timedelta(days=i)).strftime(f"{wochentage_kurz[i]} (%d.%m.)") for i in range(7)]
 
-st.subheader(
-    "1️⃣ Aktuelle Woche: Lokale Erzeugung vs. Überregionaler Netz-Import"
-)
-st.write(
-    "Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug inkl. Stromimporten (MWh/Tag):"
-)
+st.subheader("1️⃣ Aktuelle Woche: Lokale Erzeugung vs. Überregionaler Netz-Import")
+st.write("Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug inkl. Stromimporten (MWh/Tag):")
 
 df_pv = fetch_smard_series(filter_id="4068")
 df_load = fetch_smard_series(filter_id="410")
 
 if df_pv is not None and df_load is not None:
-    pv_factors = [1.2, 1.5, 1.1, 0.8, 1.4, 1.6, 1.3]
+    pv_factors = [1.2, 1.5, 1.1, 0.8, 1.4, 1.6, 1.3] 
     base_pv = [int(150 * f) for f in pv_factors]
     base_load = [500, 510, 520, 515, 490, 410, 380]
 else:
@@ -113,22 +101,15 @@ else:
     base_load = [500, 510, 520, 525, 490, 410, 380]
 
 # Aufteilung des Rests (Importbedarfs) auf die Quellen
+# 45% Regionalwind, 35% Fossile, 12% Kernkraft-Import (FR/CZ), 8% Sonstiger Import (AT/CH)
 erzeugung_data = {
     "Tag": tage,
     "🏡 Photovoltaik (Lokal 96114/96146)": base_pv,
     "🏡 Biomasse & Wasserkraft (Lokal)": [60, 60, 60, 60, 60, 55, 55],
-    "🌐 Regionaler Netz-Import: Windenergie": [
-        int((l - pv - 60) * 0.45) for l, pv in zip(base_load, base_pv)
-    ],
-    "🌐 Regionaler Netz-Import: Fossile Reserven": [
-        int((l - pv - 60) * 0.35) for l, pv in zip(base_load, base_pv)
-    ],
-    "⚛️ Ausland-Import: Rechnerische Kernkraft (FR/CZ)": [
-        int((l - pv - 60) * 0.12) for l, pv in zip(base_load, base_pv)
-    ],
-    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": [
-        int((l - pv - 60) * 0.08) for l, pv in zip(base_load, base_pv)
-    ],
+    "🌐 Regionaler Netz-Import: Windenergie": [int((l - pv - 60) * 0.45) for l, pv in zip(base_load, base_pv)],
+    "🌐 Regionaler Netz-Import: Fossile Reserven": [int((l - pv - 60) * 0.35) for l, pv in zip(base_load, base_pv)],
+    "⚛️ Ausland-Import: Rechnerische Kernkraft (FR/CZ)": [int((l - pv - 60) * 0.12) for l, pv in zip(base_load, base_pv)],
+    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": [int((l - pv - 60) * 0.08) for l, pv in zip(base_load, base_pv)]
 }
 
 df_erzeugung = pd.DataFrame(erzeugung_data)
@@ -140,42 +121,38 @@ farben = {
     "🌐 Regionaler Netz-Import: Windenergie": "#00E5FF",
     "🌐 Regionaler Netz-Import: Fossile Reserven": "#FF9100",
     "⚛️ Ausland-Import: Rechnerische Kernkraft (FR/CZ)": "#D500F9",
-    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": "#7C4DFF",
+    "🌐 Ausland-Import: Erneuerbare & Sonstige (AT/CH)": "#7C4DFF"
 }
 
 for spalte, farbe in farben.items():
-    fig1.add_trace(
-        go.Bar(
-            x=df_erzeugung["Tag"],
-            y=df_erzeugung[spalte],
-            name=spalte,
-            marker_color=farbe,
-        )
-    )
+    fig1.add_trace(go.Bar(x=df_erzeugung["Tag"], y=df_erzeugung[spalte], name=spalte, marker_color=farbe))
 
-fig1.add_trace(
-    go.Scatter(
-        x=tage,
-        y=base_load,
-        name="🔻 Gesamter Strombedarf (Hirschaid & Altendorf)",
-        line=dict(color="#FF1744", width=4),
-        mode="lines+markers",
-    )
-)
+fig1.add_trace(go.Scatter(
+    x=tage, y=base_load, name="🔻 Gesamter Strombedarf (Hirschaid & Altendorf)",
+    line=dict(color="#FF1744", width=4), mode="lines+markers"
+))
 
 fig1.update_layout(
-    barmode="stack",
-    paper_bgcolor="rgba(0,0,0,0)",
+    barmode="stack", 
+    paper_bgcolor="rgba(0,0,0,0)", 
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#FFFFFF", size=13),
+    font=dict(color="#FFFFFF", size=13), 
     xaxis=dict(
-        title=dict(text="Wochentag / Datum", standoff=25), showgrid=False
+        title=dict(
+            text="Wochentag / Datum",
+            standoff=25
+        ), 
+        showgrid=False
     ),
     yaxis=dict(title="MWh / Tag", showgrid=True, gridcolor="#2A3547"),
     legend=dict(
-        orientation="h", yanchor="top", y=-0.45, xanchor="center", x=0.5
+        orientation="h", 
+        yanchor="top", 
+        y=-0.45, 
+        xanchor="center", 
+        x=0.5
     ),
-    margin=dict(l=20, r=20, t=20, b=180),
+    margin=dict(l=20, r=20, t=20, b=180)
 )
 
 st.plotly_chart(fig1, use_container_width=True)
@@ -185,14 +162,10 @@ st.plotly_chart(fig1, use_container_width=True)
 # DASHBOARD 2: JAHRESVERLAUF & AUTARKIEGRAD (MIT REGIONALEM VERGLEICH)
 # =============================================================================
 
-st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
-)
+st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
 st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Potenziale")
-st.caption(
-    "Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahres- und Regionalvergleich"
-)
+st.caption("Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahres- und Regionalvergleich")
 
 m1, m2, m3 = st.columns(3)
 
@@ -220,20 +193,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # 1. Monatlicher Autarkie-Verlauf
 st.subheader("📈 Monatlicher Eigenversorgungsgrad (%) im Vergleich")
-monate = [
-    "Jan",
-    "Feb",
-    "Mär",
-    "Apr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Dez",
-]
+monate = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
 autarkie_hirschaid = [14, 21, 37, 53, 66, 72, 70, 63, 46, 29, 17, 11]
 autarkie_altendorf = [18, 26, 42, 61, 74, 81, 78, 71, 54, 34, 21, 15]
 autarkie_lk_bamberg = [10, 16, 29, 44, 55, 60, 58, 52, 38, 23, 13, 8]
@@ -242,30 +202,20 @@ df_autarkie_vergleich = pd.DataFrame({
     "Monat": monate,
     "Hirschaid (%)": autarkie_hirschaid,
     "Altendorf (%)": autarkie_altendorf,
-    "Landkreis Bamberg (%)": autarkie_lk_bamberg,
+    "Landkreis Bamberg (%)": autarkie_lk_bamberg
 })
 
 fig_area = px.line(
-    df_autarkie_vergleich,
-    x="Monat",
+    df_autarkie_vergleich, 
+    x="Monat", 
     y=["Hirschaid (%)", "Altendorf (%)", "Landkreis Bamberg (%)"],
-    color_discrete_sequence=["#FFD600", "#00E676", "#00B0FF"],
+    color_discrete_sequence=["#FFD600", "#00E676", "#00B0FF"]
 )
-fig_area.add_hline(
-    y=100,
-    line_dash="dash",
-    line_color="#FF1744",
-    annotation_text="100% Autarkie-Ziel",
-)
+fig_area.add_hline(y=100, line_dash="dash", line_color="#FF1744", annotation_text="100% Autarkie-Ziel")
 fig_area.update_layout(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#FFFFFF", size=13),
-    yaxis=dict(range=[0, 110], gridcolor="#2A3547"),
-    xaxis=dict(showgrid=False),
-    legend=dict(
-        orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
-    ),
+    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#FFFFFF", size=13), yaxis=dict(range=[0, 110], gridcolor="#2A3547"), xaxis=dict(showgrid=False),
+    legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
 )
 st.plotly_chart(fig_area, use_container_width=True)
 
@@ -277,24 +227,14 @@ st.subheader("☀️ Lokale Erzeugungsstruktur im Vergleich")
 col_pie_l, col_pie_r = st.columns(2)
 
 pv_hirschaid = {
-    "Anlagentyp": [
-        "Dachanlagen (Private)",
-        "Gewerbe-Dächer",
-        "Freiflächen-PV",
-        "Wasserkraft / Biomasse",
-    ],
-    "Leistung (MWp / MW)": [14.8, 10.5, 11.5, 2.0],
+    "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
+    "Leistung (MWp / MW)": [14.8, 10.5, 11.5, 2.0]
 }
 df_hirschaid = pd.DataFrame(pv_hirschaid)
 
 pv_altendorf = {
-    "Anlagentyp": [
-        "Dachanlagen (Private)",
-        "Gewerbe-Dächer",
-        "Freiflächen-PV",
-        "Wasserkraft / Biomasse",
-    ],
-    "Leistung (MWp / MW)": [3.4, 1.5, 3.5, 0.5],
+    "Anlagentyp": ["Dachanlagen (Private)", "Gewerbe-Dächer", "Freiflächen-PV", "Wasserkraft / Biomasse"],
+    "Leistung (MWp / MW)": [3.4, 1.5, 3.5, 0.5]
 }
 df_altendorf = pd.DataFrame(pv_altendorf)
 
@@ -303,45 +243,40 @@ farben_pie = ["#FFD600", "#FF9100", "#00B0FF", "#00E676"]
 with col_pie_l:
     st.markdown("##### 🏰 Hirschaid (96114)")
     fig_donut_h = px.pie(
-        df_hirschaid,
-        values="Leistung (MWp / MW)",
-        names="Anlagentyp",
-        hole=0.4,
-        color_discrete_sequence=farben_pie,
+        df_hirschaid, 
+        values="Leistung (MWp / MW)", 
+        names="Anlagentyp", 
+        hole=0.4, 
+        color_discrete_sequence=farben_pie
     )
     fig_donut_h.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FFFFFF", size=12),
-        legend=dict(
-            orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5
-        ),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5)
     )
     st.plotly_chart(fig_donut_h, use_container_width=True)
 
 with col_pie_r:
     st.markdown("##### 🏡 Altendorf (96146)")
     fig_donut_a = px.pie(
-        df_altendorf,
-        values="Leistung (MWp / MW)",
-        names="Anlagentyp",
-        hole=0.4,
-        color_discrete_sequence=farben_pie,
+        df_altendorf, 
+        values="Leistung (MWp / MW)", 
+        names="Anlagentyp", 
+        hole=0.4, 
+        color_discrete_sequence=farben_pie
     )
     fig_donut_a.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FFFFFF", size=12),
-        legend=dict(
-            orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5
-        ),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5)
     )
     st.plotly_chart(fig_donut_a, use_container_width=True)
 
 # BEGRIFFS-DEFINITIONSBOX FÜR DIE BÜRGER INKL. KERNKRAFT-HINWEIS
 st.info("""
-**🗺️ Begriffsklärung & Import-Struktur:** * **Rechnerischer Kernkraft-Import (⚛️):** Seit dem Atomausstieg wird im Inland kein Kernstrom mehr erzeugt. Wenn Strom aus Nachbarländern (insbesondere Frankreich und Tschechien) importiert wird, fließt bilanziell der Erzeugungsmix des Herkunftslandes mit ein (in Frankreich z. B. zu ~65 % Kernenergie).
-* **Was bedeutet "Region"?** Die Region umfasst das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie Teile der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
+**🗺️ Begriffsklärung & Import-Struktur:**  
+* **Rechnerischer Kernkraft-Import (⚛️):** Seit dem Atomausstieg wird im Inland kein Kernstrom mehr erzeugt. Wenn Strom aus Nachbarländern (insbesondere Frankreich und Tschechien) importiert wird, fließt bilanziell der Erzeugungsmix des Herkunftslandes mit ein (in Frankreich z. B. zu ~65 % Kernenergie).
+* **Was bedeutet \"Region\"?** Die Region umfasst das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie Teile der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
 * **Geografische Realität vor Ort:** Auf den Gemeindegebieten von Hirschaid & Altendorf stehen aufgrund von Siedlungsdichte, Schutzgebieten und Abstandsflächen **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. Der lokale Beitrag zur Energiewende erfolgt über **PV-Dach- und Freiflächenanlagen sowie Wasserkraft an der Regnitz**.
 """)
 
@@ -349,37 +284,33 @@ st.info("""
 # DASHBOARD 3: FINANZEN, WERTSCHÖPFUNG & VERTEILUNGS-ANALYSE
 # =============================================================================
 
-st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
-)
+st.markdown("<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True)
 
 st.header("3️⃣ Finanzielle Bilanz: Lokale Wertschöpfung vs. CO₂-Kosten")
-st.caption(
-    "Geschätzte Finanzströme für Hirschaid & Altendorf (Stand BEHG & MaStR)"
-)
+st.caption("Geschätzte Finanzströme für Hirschaid & Altendorf (Stand BEHG & MaStR)")
 
 f1, f2, f3 = st.columns(3)
 
 with f1:
     st.metric(
-        label="🟩 Jährliche EEG-Einnahmen vor Ort",
-        value="ca. +4,8 Mio. €",
-        delta="PV, Biomasse & Wasser",
+        label="🟩 Jährliche EEG-Einnahmen vor Ort", 
+        value="ca. +4,8 Mio. €", 
+        delta="PV, Biomasse & Wasser"
     )
 
 with f2:
     st.metric(
-        label="🟥 CO₂-Abgabe Abfluss an den Bund",
-        value="ca. -1,7 Mio. €",
+        label="🟥 CO₂-Abgabe Abfluss an den Bund", 
+        value="ca. -1,7 Mio. €", 
         delta="BEHG Heizöl/Gas/Sprit",
-        delta_color="inverse",
+        delta_color="inverse"
     )
 
 with f3:
     st.metric(
-        label="💡 Netto-Wertschöpfungs-Saldo",
-        value="ca. +3,1 Mio. €",
-        delta="Positiver Impuls für Region",
+        label="💡 Netto-Wertschöpfungs-Saldo", 
+        value="ca. +3,1 Mio. €", 
+        delta="Positiver Impuls für Region"
     )
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -388,34 +319,30 @@ col_fin_l, col_fin_r = st.columns([1, 1])
 
 with col_fin_l:
     st.subheader("📊 Gegenüberstellung der Geldflüsse (Mio. € / Jahr)")
-
+    
     finanz_df = pd.DataFrame({
-        "Kategorie": [
-            "EEG-Vergütung (Einnahmen)",
-            "CO₂-Umlage (Kostenabfluss)",
-            "Netto-Saldo (Gewinn)",
-        ],
-        "Betrag (Mio. €)": [4.8, -1.7, 3.1],
+        "Kategorie": ["EEG-Vergütung (Einnahmen)", "CO₂-Umlage (Kostenabfluss)", "Netto-Saldo (Gewinn)"],
+        "Betrag (Mio. €)": [4.8, -1.7, 3.1]
     })
-
+    
     fig_bar_fin = px.bar(
-        finanz_df,
-        x="Kategorie",
+        finanz_df, 
+        x="Kategorie", 
         y="Betrag (Mio. €)",
         color="Kategorie",
         color_discrete_map={
             "EEG-Vergütung (Einnahmen)": "#00E676",
             "CO₂-Umlage (Kostenabfluss)": "#FF1744",
-            "Netto-Saldo (Gewinn)": "#00B0FF",
-        },
+            "Netto-Saldo (Gewinn)": "#00B0FF"
+        }
     )
-
+    
     fig_bar_fin.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#FFFFFF", size=13),
         showlegend=False,
-        yaxis=dict(gridcolor="#2A3547"),
+        yaxis=dict(gridcolor="#2A3547")
     )
     st.plotly_chart(fig_bar_fin, use_container_width=True)
 
@@ -446,75 +373,3 @@ with col_vert_r:
     * **Wer empfängt?** Ca. **1.200 private Anlagenbetreiber, Landwirte und Unternehmen** (ca. 8–10 % der Haushalte), die in PV, Wasserkraft oder Biomasse investiert haben.
     * **Pro-Betreiber-Einnahme:** Durchschnittlich ca. **3.800 bis 4.000 € / Jahr** an gesetzlicher Vergütung.
     """)
-
-# =============================================================================
-# DASHBOARD 4: DACH-PV ENTWICKLUNG & POTENZIAL (10-JAHRES-VERGLEICH)
-# =============================================================================
-
-st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
-)
-
-st.header(
-    "4️⃣ PV-Dachflächen-Potenzial & 10-Jahres-Ausbaupfad (Hirschaid & Altendorf)"
-)
-st.caption(
-    "Gegenüberstellung der tatsächlich installierten Dach-PV-Leistung (Kumuliert 2016–2026) mit dem technisch erschließbaren Gesamtdachpotenzial"
-)
-
-# 1. Datenbasis für den 10-Jahres-Verlauf (Dach-PV kumuliert im MaStR)
-jahre_10 = list(range(2016, 2027))
-ist_dach_mwp = [8.2, 9.1, 10.5, 12.1, 14.0, 16.2, 18.8, 21.5, 24.2, 26.5, 28.3]
-gesamt_dach_potenzial = 52.5  # Errechnetes Gesamtdachpotenzial (MWp)
-
-# Berechne das verbleibende ungenutzte Potenzial
-freies_potenzial = [gesamt_dach_potenzial - val for val in ist_dach_mwp]
-
-# 2. Plotly-Visualisierung (Gestapelte Säulen + Potenziallinie)
-fig_pot = go.Figure()
-
-# IST-Zustand (Installierte Dächer)
-fig_pot.add_trace(
-    go.Bar(
-        x=jahre_10,
-        y=ist_dach_mwp,
-        name="Belegte Dach-PV (IST-Zustand)",
-        marker_color="#FFD600",
-        hovertemplate="%{x}: %{y:.1f} MWp installierte Dach-PV<extra></extra>",
-    )
-)
-
-# Ungenutztes/Freies Dach-Potenzial
-fig_pot.add_trace(
-    go.Bar(
-        x=jahre_10,
-        y=freies_potenzial,
-        name="Ungenutztes Dach-Potenzial (Frei)",
-        marker_color="#2A3547",
-        hovertemplate="%{x}: noch %{y:.1f} MWp ungenutztes Dachpotenzial<extra></extra>",
-    )
-)
-
-# Rote gestrichelte Linie für das Gesamtdachpotenzial
-fig_pot.add_shape(
-    type="line",
-    x0=2015.5,
-    x1=2026.5,
-    y0=gesamt_dach_potenzial,
-    y1=gesamt_dach_potenzial,
-    line=dict(color="#FF1744", width=3, dash="dash"),
-)
-
-fig_pot.add_annotation(
-    x=2021,
-    y=gesamt_dach_potenzial + 2.2,
-    text=f"Technisches Gesamtdachpotenzial (~{gesamt_dach_potenzial} MWp)",
-    showarrow=False,
-    font=dict(color="#FF1744", size=13, family="Arial"),
-)
-
-fig_pot.update_layout(
-    barmode="stack",
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#FFFFFF", size=13),
