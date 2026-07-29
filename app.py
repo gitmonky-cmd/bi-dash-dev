@@ -1,3 +1,4 @@
+Python
 import datetime
 import pandas as pd
 import plotly.express as px
@@ -6,7 +7,9 @@ import requests
 import streamlit as st
 
 # 1. SEITEN-LAYOUT EINSTELLEN
-st.set_page_config(page_title="Energie-Realität Hirschaid & Altendorf", layout="wide")
+st.set_page_config(
+    page_title="Energie-Realität Hirschaid & Altendorf", layout="wide"
+)
 
 
 # 2. HELFER-FUNKTIONEN FÜR DIE SMARD.DE API (MIT CACHING)
@@ -55,7 +58,8 @@ def get_latest_electricity_price():
 
 st.title("⚡ Energie-Realitäts-Check: Hirschaid & Altendorf")
 st.caption(
-    "Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146"
+    "Ein Service der Bürgerinitiative | Live-Datenbasis: SMARD.de"
+    " (Bundesnetzagentur) & MaStR | PLZ 96114 & 96146"
 )
 
 st.markdown("---")
@@ -98,7 +102,8 @@ st.subheader(
     "1️⃣ Aktuelle Woche: Lokale Erzeugung vs. Überregionaler Netz-Import"
 )
 st.write(
-    "Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) & regionaler Netzbezug inkl. Stromimporten (MWh/Tag):"
+    "Physikalisch bilanzierte Erzeugung vor Ort (PV, Wasser, Biomasse) &"
+    " regionaler Netzbezug inkl. Stromimporten (MWh/Tag):"
 )
 
 df_pv = fetch_smard_series(filter_id="4068")
@@ -186,12 +191,14 @@ st.plotly_chart(fig1, use_container_width=True)
 # =============================================================================
 
 st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
 )
 
 st.header("2️⃣ Jahresverlauf: Eigenversorgungsgrad & Potenziale")
 st.caption(
-    "Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahres- und Regionalvergleich"
+    "Entwicklung der Selbstversorgung von Hirschaid & Altendorf im Jahres- und"
+    " Regionalvergleich"
 )
 
 m1, m2, m3 = st.columns(3)
@@ -340,7 +347,8 @@ with col_pie_r:
 
 # BEGRIFFS-DEFINITIONSBOX FÜR DIE BÜRGER INKL. KERNKRAFT-HINWEIS
 st.info("""
-**🗺️ Begriffsklärung & Import-Struktur:** * **Rechnerischer Kernkraft-Import (⚛️):** Seit dem Atomausstieg wird im Inland kein Kernstrom mehr erzeugt. Wenn Strom aus Nachbarländern (insbesondere Frankreich und Tschechien) importiert wird, fließt bilanziell der Erzeugungsmix des Herkunftslandes mit ein (in Frankreich z. B. zu ~65 % Kernenergie).
+**🗺️ Begriffsklärung & Import-Struktur:**
+* **Rechnerischer Kernkraft-Import (⚛️):** Seit dem Atomausstieg wird im Inland kein Kernstrom mehr erzeugt. Wenn Strom aus Nachbarländern (insbesondere Frankreich und Tschechien) importiert wird, fließt bilanziell der Erzeugungsmix des Herkunftslandes mit ein (in Frankreich z. B. zu ~65 % Kernenergie).
 * **Was bedeutet "Region"?** Die Region umfasst das Verteilnetz des Bayernwerks im **Landkreis Bamberg** sowie Teile der **Planungsregion Oberfranken-West**. Stromnetze enden nicht an Kommunalgrenzen.
 * **Geografische Realität vor Ort:** Auf den Gemeindegebieten von Hirschaid & Altendorf stehen aufgrund von Siedlungsdichte, Schutzgebieten und Abstandsflächen **keine geeigneten Flächen für Windenergieanlagen** zur Verfügung. Der lokale Beitrag zur Energiewende erfolgt über **PV-Dach- und Freiflächenanlagen sowie Wasserkraft an der Regnitz**.
 """)
@@ -350,7 +358,8 @@ st.info("""
 # =============================================================================
 
 st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
 )
 
 st.header("3️⃣ Finanzielle Bilanz: Lokale Wertschöpfung vs. CO₂-Kosten")
@@ -452,14 +461,16 @@ with col_vert_r:
 # =============================================================================
 
 st.markdown(
-    "<br><br><hr style='border: 2px solid #2A3547;'><br>", unsafe_allow_html=True
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
 )
 
 st.header(
     "4️⃣ PV-Dachflächen-Potenzial & 10-Jahres-Ausbaupfad (Hirschaid & Altendorf)"
 )
 st.caption(
-    "Gegenüberstellung der tatsächlich installierten Dach-PV-Leistung (Kumuliert 2016–2026) mit dem technisch erschließbaren Gesamtdachpotenzial"
+    "Gegenüberstellung der tatsächlich installierten Dach-PV-Leistung (Kumuliert"
+    " 2016–2026) mit dem technisch erschließbaren Gesamtdachpotenzial"
 )
 
 # 1. Datenbasis für den 10-Jahres-Verlauf (Dach-PV kumuliert im MaStR)
