@@ -830,9 +830,15 @@ with col_bess_l:
         ),
         xaxis=dict(showgrid=False),
         legend=dict(
-            orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
+            orientation="h",
+            yanchor="bottom",
+            y=1.05,  # Platziert die Legende oberhalb der Grafik
+            xanchor="center",
+            x=0.5,  # Zentriert die Legende
         ),
-        margin=dict(l=20, r=20, t=20, b=120),
+        margin=dict(
+            l=20, r=20, t=50, b=40  # t=50 schafft oben Platz für die Legende
+        ),
     )
     st.plotly_chart(fig_bess, use_container_width=True)
 
@@ -945,9 +951,15 @@ with col_alt_l:
         ),
         xaxis=dict(showgrid=False),
         legend=dict(
-            orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
+            orientation="h",
+            yanchor="bottom",
+            y=1.05,  # Platziert die Legende oberhalb der Grafik
+            xanchor="center",
+            x=0.5,  # Zentriert die Legende
         ),
-        margin=dict(l=20, r=20, t=20, b=120),
+        margin=dict(
+            l=20, r=20, t=50, b=40  # t=50 schafft oben Platz für die Legende
+        ),
     )
     st.plotly_chart(fig_bess_alt, use_container_width=True)
 
