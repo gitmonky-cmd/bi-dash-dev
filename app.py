@@ -743,7 +743,7 @@ st.markdown(
 )
 
 st.header(
-    "7️⃣ Potenzial für BESS (Batteriespeicher) & Netzkapazitäten"
+    "6️⃣ Potenzial für BESS (Batteriespeicher) & Netzkapazitäten"
 )
 st.caption(
     "Analyse der dezentralen Heimspeicher und der möglichen"
@@ -858,7 +858,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.header("6️⃣ Historie der Windkraft in Hirschaid und Altendorf")
+st.header("7️⃣ Historie der Windkraft in Hirschaid und Altendorf")
 st.caption(
     "Chronologische Übersicht über die Entwicklung, Meilensteine,"
     " Ratsbeschlüsse und Bürgerentscheide bezüglich der Windkraftplanungen"
