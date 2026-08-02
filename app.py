@@ -1244,9 +1244,19 @@ st.dataframe(
     hide_index=True,
 )
 
-# In der Seitenleiste einen ausklappbaren Bereich erstellen
-with st.sidebar.expander("⚖️ Impressum & Datenschutz"):
-    st.markdown("### Impressum")
+# ==========================================
+# GANZ UNTEN AM ENDE DER SEITE:
+# Impressum & Datenschutz (Ausklappbar)
+# ==========================================
+
+# Visuelle Trennlinie am Ende der Seite
+st.divider()
+
+# Ausklappbares Menü (klappt nach unten auf)
+with st.expander("⚖️ Impressum & Datenschutzerklärung anzeigen", expanded=False):
+    
+    # 1. IMPRESSUM
+    st.subsection if hasattr(st, 'subsection') else st.markdown("### Impressum")
     st.markdown("""
     **Bürgerinitiative Hirschaid-Altendorf e.V.**  
     Industriestraße 13  
@@ -1254,32 +1264,26 @@ with st.sidebar.expander("⚖️ Impressum & Datenschutz"):
 
     * **1. Vorsitzender:** Benjamin Bauer  
     * **2. Vorsitzender:** Wolf-Dieter Czap  
-    * **Telefon:** [017647320301](tel:017647320301)  
+    * **Telefonnummer:** [017647320301](tel:017647320301)  
     * **E-Mail:** [info@bi-hirschaid-altendorf.de](mailto:info@bi-hirschaid-altendorf.de)  
-    
-    Website: [bi-hirschaid-altendorf.streamlit.app](https://bi-hirschaid-altendorf.streamlit.app/)
+
+    Link zu dieser App: [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/)
     """)
 
-    st.divider()
+    st.markdown("---")
 
+    # 2. DATENSCHUTZ
     st.markdown("### Datenschutzerklärung")
     st.markdown("""
-    **Wer wir sind**  
+    #### Wer wir sind
     Die Adresse unserer Website ist: [https://windpark-info.de](https://windpark-info.de) sowie die Webanwendung [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/).
 
-    **Kommentare**  
-    Wenn Besucher Kommentare auf der Website schreiben, sammeln wir die Daten, die im Kommentar-Formular angezeigt werden, außerdem die IP-Adresse und den User-Agent-String zur Spam-Erkennung.  
-    Die Datenschutzerklärung des Gravatar-Dienstes findest du hier: [https://automattic.com/privacy/](https://automattic.com/privacy/).
+    #### Welche personenbezogenen Daten wir sammeln und warum wir sie sammeln
+    * **Kommentare:** Wenn Besucher Kommentare schreiben, sammeln wir die Daten im Formular, die IP-Adresse und den User-Agent-String zur Spam-Erkennung. Hash-Abgleich über Gravatar möglich ([Datenschutz Gravatar](https://automattic.com/privacy/)).
+    * **Medien:** Bitte vermeide das Hochladen von Bildern mit EXIF-GPS-Standortdaten.
+    * **Cookies:** Speicherung von Namen/E-Mail in Cookies für 1 Jahr möglich. Temporäre Login-Cookies verfallen beim Schließen des Browsers.
+    * **Eingebettete Inhalte:** Inhalte von externen Websites verhalten sich so, als ob der Besucher direkt diese Website besucht.
 
-    **Medien**  
-    Vermeide das Hochladen von Fotos mit EXIF-GPS-Standortdaten.
-
-    **Cookies**  
-    Beim Schreiben von Kommentaren können Name und E-Mail in Cookies (1 Jahr) gespeichert werden. Temporäre Login-Cookies verfallen beim Schließen des Browsers, Anmelde-Cookies nach 2 Tagen (bzw. 2 Wochen bei "Angemeldet bleiben").
-
-    **Eingebettete Inhalte**  
-    Inhalte von anderen Websites verhalten sich so, als ob der Besucher die andere Website besucht hätte (Tracking möglich).
-
-    **Speicherdauer & Rechte**  
-    Kommentare werden unbegrenzt gespeichert. Benutzer können ihre Daten jederzeit einsehen, bearbeiten, löschen oder exportieren lassen.
+    #### Rechte & Speicherdauer
+    Kommentare bleiben zeitlich unbegrenzt gespeichert. Registrierte Nutzer können ihre Daten jederzeit einsehen, ändern oder löschen lassen. Du hast das Recht auf Auskunft, Datenexport und Löschung deiner Daten.
     """)
