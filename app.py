@@ -855,6 +855,12 @@ st.info("""
 Ein zentraler Großbatteriespeicher (BESS) am **Umspannwerk Hirschaid** mit ca. **20 MW / 40 MWh** würde die bestehende Infrastruktur ideal ergänzen. Dadurch lassen sich die bereits installierten **45,2 MWp Sonnenenergie** aus Hirschaid und Altendorf rund um die Uhr nutzen, ohne dass neue Flächen im Außenbereich für Erzeugungsanlagen opfert werden müssen.
 """)
 
+st.caption("""
+**📌 Hinweis zur Datengrundlage & Belastbarkeit:**
+* **IST-Bestand (Heim- & Gewerbespeicher):** Daten basieren auf den amtlichen und gesetzlich verpflichtenden Einträgen des **Marktstammdatenregisters (MaStR)** der Bundesnetzagentur für die Postleitzahlen 96114 (Hirschaid) und 96146 (Altendorf).
+* **Großspeicher-Potenzial (BESS):** Technische Modellrechnung und Potenzialabschätzung zur Netzdienlichkeit. Sie orientiert sich an der installierten PV-Spitzenleistung (MWp) sowie den typischen Kapazitätsgrenzen der lokalen 20-kV-Ortsnetze bzw. des 110-kV-Umspannwerks (Bayernwerk Netz GmbH).
+""")
+
 # =============================================================================
 # DASHBOARD 7: POTENZIAL FÜR BATTERIESPEICHER IN DER GEMEINDE ALTENDORF (96146)
 # =============================================================================
@@ -974,6 +980,12 @@ with col_alt_r:
 st.info("""
 **⚡ Fazit für die Gemeinde Altendorf:** 
 Mit einem gezielten Ausbau von **5 MW / 10 MWh Speicherkapazität** (kombiniert aus Quartiersspeichern und Co-Located-Puffern an Freiflächen-PV) kann Altendorf seinen erzeugten Sonnenstrom (8,4 MWp) nahezu vollständig vor Ort verwerten, Einspeisespitzen abfedern und den Autarkiegrad weiter steigern.
+""")
+
+st.caption("""
+**📌 Hinweis zur Datengrundlage & Belastbarkeit:**
+* **IST-Bestand (Heim- & Gewerbespeicher):** Daten basieren auf den amtlichen und gesetzlich verpflichtenden Einträgen des **Marktstammdatenregisters (MaStR)** der Bundesnetzagentur für die Postleitzahlen 96114 (Hirschaid) und 96146 (Altendorf).
+* **Großspeicher-Potenzial (BESS):** Technische Modellrechnung und Potenzialabschätzung zur Netzdienlichkeit. Sie orientiert sich an der installierten PV-Spitzenleistung (MWp) sowie den typischen Kapazitätsgrenzen der lokalen 20-kV-Ortsnetze bzw. des 110-kV-Umspannwerks (Bayernwerk Netz GmbH).
 """)
 
 # =============================================================================
