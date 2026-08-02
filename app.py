@@ -5,13 +5,63 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 
+# =============================================================================
 # 1. SEITEN-LAYOUT EINSTELLEN
+# =============================================================================
 st.set_page_config(
     page_title="Energie-Realität Hirschaid & Altendorf", layout="wide"
 )
 
 
+# =============================================================================
+# PASSWORTSCHUTZ (Methode 2: Streamlit Secrets Management)
+# =============================================================================
+def check_password():
+    """Prüft das Passwort gegen st.secrets['APP_PASSWORD']"""
+
+    def password_entered():
+        """Vergleicht die Eingabe mit dem Secret"""
+        # Falls APP_PASSWORD nicht in secrets definiert ist, Fallback zur Fehlerbehandlung
+        expected_password = st.secrets.get("APP_PASSWORD", None)
+
+        if expected_password and st.session_state["password"] == expected_password:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Passwort aus Speicher löschen
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # Erstaufruf: Eingabefeld anzeigen
+        st.text_input(
+            "Bitte Passwort eingeben, um das BI Dashboard aufzurufen:",
+            type="password",
+            on_change=password_entered,
+            key="password",
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Falsche Eingabe: Feld erneut anzeigen + Fehlermeldung
+        st.text_input(
+            "Bitte Passwort eingeben, um das BI Dashboard aufzurufen:",
+            type="password",
+            on_change=password_entered,
+            key="password",
+        )
+        st.error("😕 Falsches Passwort")
+        return False
+    else:
+        # Passwort korrekt
+        return True
+
+
+# Bricht die Ausführung der restlichen App ab, solange das Passwort nicht korrekt ist
+if not check_password():
+    st.stop()
+
+
+# =============================================================================
 # 2. HELFER-FUNKTIONEN FÜR DIE SMARD.DE API (MIT CACHING)
+# =============================================================================
 @st.cache_data(ttl=3600)
 def fetch_smard_series(filter_id, region="DE"):
     """Holt Zeitreihendaten von SMARD.de"""
