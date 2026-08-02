@@ -732,3 +732,266 @@ st.info("""
 * **Vorrang des Außenbereichs (§ 35 BauGB / § 37 EEG):** Der Gesetzgeber hat bewusst geregelt, dass Freiflächen-PV primär auf **vorbelasteten Flächen** (Entlang von Autobahnen, zweigleisigen Schienenwegen, Konversionsflächen und Baggerseen) errichtet werden soll.
 * **Kernaussage für den Marktgemeinderat:** Zusammen mit den ungenutzten Dachflächen (**24,2 MWp**) stehen auf dem Gemeindegebiet von Hirschaid und Altendorf noch knapp **48 MWp an vorrangigen PV-Potenzialen** zur Verfügung. Das Entziehen fruchtbarer landwirtschaftlicher Böden außerhalb dieser Korridore ist somit städtebaulich und ökologisch nicht begründbar.
 """)
+
+# =============================================================================
+# DASHBOARD 6: HISTORIE DER WINDKRAFT IN HIRSCHAID UND ALTENDORF
+# =============================================================================
+
+st.markdown(
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
+)
+
+st.header("6️⃣ Historie der Windkraft in Hirschaid und Altendorf")
+st.caption(
+    "Chronologische Übersicht über die Entwicklung, Meilensteine,"
+    " Ratsbeschlüsse und Bürgerentscheide bezüglich der Windkraftplanungen"
+    " (Muna Rothensand & Seußling-West / Lauberg)"
+)
+
+# Datensatz für die Historie inkl. Quellennachweisen und Links
+historie_data = [
+    {
+        "Datum / Zeitraum": "16.12.2022",
+        "Ereignis / Beschluss": (
+            "Berichterstattung über Windkraft-Suchräume in Hirschaid"
+        ),
+        "Beteiligte / Ort": "Markt Hirschaid, Fränkischer Tag",
+        "Details & Auswirkungen": (
+            "Der Fränkische Tag berichtet über die drei vom Markt Hirschaid"
+            " ermittelten Potenzialflächen/Suchräume für Windkraftanlagen"
+            " (darunter die Muna Rothensand und der Bereich Seußling-West /"
+            " Lauberg)."
+        ),
+        "Nachweis / Link": (
+            "https://www.fraenkischertag.de/lokales/bamberg/umwelt-natur/potenzial-in-hirschaid-gibt-es-drei-moegliche-flaechen-fuer-windraeder-art-216902"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "13.06.2024",
+        "Ereignis / Beschluss": (
+            "Gründungsbeschluss Bürgerenergiegesellschaft Altendorf"
+        ),
+        "Beteiligte / Ort": "Gemeinderat Altendorf",
+        "Details & Auswirkungen": (
+            "Der Gemeinderat Altendorf fasst Beschlüsse zur Vorbereitung der"
+            " Gründung der Altendorf Bürgerenergiegesellschaft mbH und"
+            " Einleitung der Vorplanungen für gemeindliche Windkraftanlagen bei"
+            " Seußling-West."
+        ),
+        "Nachweis / Link": "Amtsblatt Gemeinde Altendorf (Juni/Juli 2024)",
+    },
+    {
+        "Datum / Zeitraum": "29.08.2024",
+        "Ereignis / Beschluss": "Pressemitteilung zu Muna-Windrädern",
+        "Beteiligte / Ort": "Stadtwerke Bamberg, Lebenshilfe Bamberg",
+        "Details & Auswirkungen": (
+            "Öffentliche Ankündigung und Pressemitteilung der Kooperation"
+            " zwischen den Stadtwerken Bamberg und der Lebenshilfe Bamberg e. V."
+            " zur Errichtung von zwei Windkraftanlagen auf dem ehemaligen"
+            " Munitionsdepot (Muna) bei Rothensand."
+        ),
+        "Nachweis / Link": (
+            "https://www.stadtwerke-bamberg.de/nachricht/symbol-fuer-den-klimaschutz-stadtwerke-bamberg-ersetzen-das-aelteste-windrad-im-landkreis"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "08.11.2024",
+        "Ereignis / Beschluss": (
+            "Behandlung des Antrags auf Vorbescheid (Muna Rothensand)"
+        ),
+        "Beteiligte / Ort": "Marktgemeinderat Hirschaid, Gemarkung Rothensand",
+        "Details & Auswirkungen": (
+            "TOP 07: Beschlussfassung über den Antrag auf Vorbescheid für bis"
+            " zu zwei Windenergieanlagen im geplanten Windvorranggebiet auf"
+            " Gemarkung Rothensand zur Prüfung der luftverkehrsrechtlichen"
+            " Zulässigkeit nach § 9 Abs. 1a BImSchG."
+        ),
+        "Nachweis / Link": (
+            "https://epaper.wittich.de/frontend/catalogs/501312/2/pdf/complete.pdf"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "05.05.2025",
+        "Ereignis / Beschluss": "Übergabe einer Petition",
+        "Beteiligte / Ort": (
+            "Bürgerinitiative, Bürgermeister von Altendorf und Hirschaid"
+        ),
+        "Details & Auswirkungen": (
+            "Übergabe der Petition gegen die geplanten Windkraftprojekte an"
+            " die Bürgermeister."
+        ),
+        "Nachweis / Link": "Protokoll / BI-Mitteilung (05.05.2025)",
+    },
+    {
+        "Datum / Zeitraum": "25.06.2025",
+        "Ereignis / Beschluss": "Erster Infoabend",
+        "Beteiligte / Ort": "Bürgerinitiative, Firma WEMA",
+        "Details & Auswirkungen": (
+            "Aufklärung der Öffentlichkeit über die Windpark-Projekte im Rahmen"
+            " einer Informationsveranstaltung."
+        ),
+        "Nachweis / Link": "Veranstaltungsnachweis BI (25.06.2025)",
+    },
+    {
+        "Datum / Zeitraum": "23.07.2025",
+        "Ereignis / Beschluss": "Zweiter Infoabend",
+        "Beteiligte / Ort": (
+            "Waldhaus Köttmannsdorf, Bürger, Gemeinderäte, Bürgermeister"
+        ),
+        "Details & Auswirkungen": (
+            "Zweite Informationsveranstaltung mit zahlreichen Bürgern und"
+            " Vertretern der Kommunalpolitik von Hirschaid und Altendorf."
+        ),
+        "Nachweis / Link": "Veranstaltungsnachweis BI (23.07.2025)",
+    },
+    {
+        "Datum / Zeitraum": "August 2025",
+        "Ereignis / Beschluss": (
+            "Austausch mit der Politik & Info-Schreiben Altendorf"
+        ),
+        "Beteiligte / Ort": (
+            "Gemeinde Altendorf, Bürgerinitiative, Abgeordnete (MdB, MdL),"
+            " Landrat"
+        ),
+        "Details & Auswirkungen": (
+            "Herausgabe des Informationsblatts 'Information zur Wind-Energie in"
+            " der Gemeinde Altendorf' an alle Haushalte sowie intensiver"
+            " politischer Austausch der BI mit Abgeordneten."
+        ),
+        "Nachweis / Link": (
+            "Infoblatt Gemeinde Altendorf / BI-Dokumentation (August 2025)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "04.08.2025",
+        "Ereignis / Beschluss": "Vereinsgründung",
+        "Beteiligte / Ort": "Bürgerinitiative Hirschaid-Altendorf e. V.",
+        "Details & Auswirkungen": (
+            "Offizielle Gründungssitzung des Vereins 'Bürgerinitiative"
+            " Hirschaid-Altendorf'."
+        ),
+        "Nachweis / Link": "Vereinsregister / Gründungsprotokoll (04.08.2025)",
+    },
+    {
+        "Datum / Zeitraum": "01.09.2025",
+        "Ereignis / Beschluss": (
+            "Ausstieg des Marktes Hirschaid aus kommunalem Windpark"
+        ),
+        "Beteiligte / Ort": "Marktgemeinderat Hirschaid",
+        "Details & Auswirkungen": (
+            "Der Marktgemeinderat beschließt, die Projektierungsmaßnahmen für"
+            " 2 der 5 geplanten Windkraftanlagen auf Hirschaider Gebiet"
+            " einzustellen und gestellte Anträge zurückzuziehen."
+        ),
+        "Nachweis / Link": (
+            "Sitzungsprotokoll Marktgemeinderat Hirschaid (01.09.2025)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "September 2025",
+        "Ereignis / Beschluss": "Ablehnung der Muna-Windräder Rothensand",
+        "Beteiligte / Ort": (
+            "Marktgemeinderat Hirschaid, Stadtwerke Bamberg, Lebenshilfe"
+            " Bamberg"
+        ),
+        "Details & Auswirkungen": (
+            "In einer knappen Abstimmung lehnt der Marktgemeinderat Hirschaid"
+            " das geplante Projekt von zwei Windkraftanlagen auf dem Gelände"
+            " des ehemaligen Munitionsdepots (Muna) bei Rothensand ab."
+        ),
+        "Nachweis / Link": (
+            "Beschluss F2025 / Sitzungsprotokoll Hirschaid (Sept. 2025)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "24.09.2025",
+        "Ereignis / Beschluss": "Übergabe der Unterschriftenliste",
+        "Beteiligte / Ort": "Bürgerinitiative, Gemeinde Altendorf / Hirschaid",
+        "Details & Auswirkungen": (
+            "Formelle Übergabe der gesammelten Unterschriften für das"
+            " eingeleitete Bürgerbegehren."
+        ),
+        "Nachweis / Link": (
+            "Nachweis Bürgerbegehren / Übergabeprotokoll (24.09.2025)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "17.11.2025",
+        "Ereignis / Beschluss": (
+            "Offizielle Bürgerversammlung Windenergie Altendorf"
+        ),
+        "Beteiligte / Ort": "Gemeinde Altendorf, Feuerwehrgerätehaus Altendorf",
+        "Details & Auswirkungen": (
+            "Offizielle Bürgerversammlung und Informationsveranstaltung der"
+            " Gemeinde Altendorf zu den Vorplanungen des Windparks Seußling-West"
+            " und Erläuterung des bevorstehenden Bürgerentscheids."
+        ),
+        "Nachweis / Link": "Bekanntmachung Gemeinde Altendorf (17.11.2025)",
+    },
+    {
+        "Datum / Zeitraum": "14.12.2025",
+        "Ereignis / Beschluss": "Bürgerentscheid in Altendorf",
+        "Beteiligte / Ort": "Gemeinde Altendorf (inkl. Ortsteil Seußling)",
+        "Details & Auswirkungen": (
+            "Eine Mehrheit von rund 60 % der Bürger stimmt gegen die"
+            " Beteiligung der Gemeinde am geplanten Windpark. In der Folge"
+            " stoppen die Gemeinden Altendorf und Hirschaid die Planungen für"
+            " eigene kommunale Windkraftanlagen im Gebiet Seußling-West."
+        ),
+        "Nachweis / Link": (
+            "Amtliches Wahlergebnis Bürgerentscheid Altendorf (14.12.2025)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "20.04.2026",
+        "Ereignis / Beschluss": (
+            "Entscheidung des Regionalen Planungsververbandes (RPV)"
+        ),
+        "Beteiligte / Ort": "Regionaler Planungsverband Oberfranken-West",
+        "Details & Auswirkungen": (
+            "Lauberg: Das geplante Vorranggebiet 4288 ('Seußling-West') wird"
+            " nicht im Regionalplan ausgewiesen. Muna Rothensand: Auch der"
+            " Antrag auf Ausweisung eines Vorranggebiets beim ehemaligen"
+            " Muna-Depot wird vom RPV offiziell abgelehnt."
+        ),
+        "Nachweis / Link": (
+            "Beschlussunterlagen RPV Oberfranken-West (20.04.2026)"
+        ),
+    },
+    {
+        "Datum / Zeitraum": "Stand heute (2026)",
+        "Ereignis / Beschluss": (
+            "Festhalten an den Windpark-Plänen trotz Absagen"
+        ),
+        "Beteiligte / Ort": (
+            "Stadtwerke Bamberg, Lebenshilfe Bamberg, Landratsamt Bamberg"
+        ),
+        "Details & Auswirkungen": (
+            "Trotz der Gegenwind-Beschlüsse des Marktgemeinderats Hirschaid"
+            " und der Ablehnung durch den Regionalen Planungsververband halten"
+            " die Stadtwerke Bamberg offiziell an ihren Plänen für die"
+            " Windräder auf der ehem. Muna fest und streben ein"
+            " BImSchG-Einzelgenehmigungsverfahren beim Landratsamt Bamberg an."
+        ),
+        "Nachweis / Link": (
+            "Schriftliche Bestätigung Geschäftsführung Stadtwerke Bamberg (2026)"
+        ),
+    },
+]
+
+df_historie = pd.DataFrame(historie_data)
+
+# Interaktive Tabellendarstellung in Streamlit
+st.dataframe(
+    df_historie,
+    column_config={
+        "Nachweis / Link": st.column_config.LinkColumn(
+            "Nachweis / Link", display_text="Link / Nachweis öffnen"
+        )
+    },
+    use_container_width=True,
+    hide_index=True,
+)
+
+```
