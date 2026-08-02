@@ -1004,7 +1004,7 @@ st.caption(
     " (Muna Rothensand & Seußling-West / Lauberg)"
 )
 
-# Datensatz mit getrenntem Bezeichnungstext ("Nachweis") und optionaler Web-URL ("Link")
+# Datensatz für die Historie inkl. Quellennachweisen und Links
 historie_data = [
     {
         "Datum / Zeitraum": "16.12.2022",
@@ -1018,8 +1018,9 @@ historie_data = [
             " (darunter die Muna Rothensand und der Bereich Seußling-West /"
             " Lauberg)."
         ),
-        "Nachweis": "Fränkischer Tag (Artikel vom 16.12.2022)",
-        "Link": "https://www.fraenkischertag.de/lokales/bamberg/umwelt-natur/potenzial-in-hirschaid-gibt-es-drei-moegliche-flaechen-fuer-windraeder-art-216902",
+        "Nachweis / Link": (
+            "[Fränkischer Tag (16.12.2022)](https://www.fraenkischertag.de/lokales/bamberg/umwelt-natur/potenzial-in-hirschaid-gibt-es-drei-moegliche-flaechen-fuer-windraeder-art-216902)"
+        ),
     },
     {
         "Datum / Zeitraum": "13.06.2024",
@@ -1033,8 +1034,7 @@ historie_data = [
             " Einleitung der Vorplanungen für gemeindliche Windkraftanlagen bei"
             " Seußling-West."
         ),
-        "Nachweis": "Amtsblatt Gemeinde Altendorf (Juni/Juli 2024)",
-        "Link": None,
+        "Nachweis / Link": "Amtsblatt Gemeinde Altendorf (Juni/Juli 2024)",
     },
     {
         "Datum / Zeitraum": "29.08.2024",
@@ -1046,8 +1046,9 @@ historie_data = [
             " zur Errichtung von zwei Windkraftanlagen auf dem ehemaligen"
             " Munitionsdepot (Muna) bei Rothensand."
         ),
-        "Nachweis": "Pressemitteilung Stadtwerke Bamberg",
-        "Link": "https://www.stadtwerke-bamberg.de/nachricht/symbol-fuer-den-klimaschutz-stadtwerke-bamberg-ersetzen-das-aelteste-windrad-im-landkreis",
+        "Nachweis / Link": (
+            "[Pressemitteilung Stadtwerke Bamberg](https://www.stadtwerke-bamberg.de/nachricht/symbol-fuer-den-klimaschutz-stadtwerke-bamberg-ersetzen-das-aelteste-windrad-im-landkreis)"
+        ),
     },
     {
         "Datum / Zeitraum": "08.11.2024",
@@ -1061,8 +1062,9 @@ historie_data = [
             " Gemarkung Rothensand zur Prüfung der luftverkehrsrechtlichen"
             " Zulässigkeit nach § 9 Abs. 1a BImSchG."
         ),
-        "Nachweis": "Wittich E-Paper / Amtsblatt",
-        "Link": "https://epaper.wittich.de/frontend/catalogs/501312/2/pdf/complete.pdf",
+        "Nachweis / Link": (
+            "[Wittich E-Paper / Amtsblatt](https://epaper.wittich.de/frontend/catalogs/501312/2/pdf/complete.pdf)"
+        ),
     },
     {
         "Datum / Zeitraum": "05.05.2025",
@@ -1074,8 +1076,7 @@ historie_data = [
             "Übergabe der Petition gegen die geplanten Windkraftprojekte an"
             " die Bürgermeister."
         ),
-        "Nachweis": "Protokoll / BI-Mitteilung (05.05.2025)",
-        "Link": None,
+        "Nachweis / Link": "Protokoll / BI-Mitteilung (05.05.2025)",
     },
     {
         "Datum / Zeitraum": "25.06.2025",
@@ -1085,8 +1086,7 @@ historie_data = [
             "Aufklärung der Öffentlichkeit über die Windpark-Projekte im Rahmen"
             " einer Informationsveranstaltung."
         ),
-        "Nachweis": "Veranstaltungsnachweis BI (25.06.2025)",
-        "Link": None,
+        "Nachweis / Link": "Veranstaltungsnachweis BI (25.06.2025)",
     },
     {
         "Datum / Zeitraum": "23.07.2025",
@@ -1098,8 +1098,7 @@ historie_data = [
             "Zweite Informationsveranstaltung mit zahlreichen Bürgern und"
             " Vertretern der Kommunalpolitik von Hirschaid und Altendorf."
         ),
-        "Nachweis": "Veranstaltungsnachweis BI (23.07.2025)",
-        "Link": None,
+        "Nachweis / Link": "Veranstaltungsnachweis BI (23.07.2025)",
     },
     {
         "Datum / Zeitraum": "August 2025",
@@ -1115,10 +1114,9 @@ historie_data = [
             " der Gemeinde Altendorf' an alle Haushalte sowie intensiver"
             " politischer Austausch der BI mit Abgeordneten."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Infoblatt Gemeinde Altendorf / BI-Dokumentation (August 2025)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "04.08.2025",
@@ -1128,8 +1126,7 @@ historie_data = [
             "Offizielle Gründungssitzung des Vereins 'Bürgerinitiative"
             " Hirschaid-Altendorf'."
         ),
-        "Nachweis": "Vereinsregister / Gründungsprotokoll (04.08.2025)",
-        "Link": None,
+        "Nachweis / Link": "Vereinsregister / Gründungsprotokoll (04.08.2025)",
     },
     {
         "Datum / Zeitraum": "01.09.2025",
@@ -1142,10 +1139,9 @@ historie_data = [
             " 2 der 5 geplanten Windkraftanlagen auf Hirschaider Gebiet"
             " einzustellen und gestellte Anträge zurückzuziehen."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Sitzungsprotokoll Marktgemeinderat Hirschaid (01.09.2025)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "September 2025",
@@ -1159,10 +1155,9 @@ historie_data = [
             " das geplante Projekt von zwei Windkraftanlagen auf dem Gelände"
             " des ehemaligen Munitionsdepots (Muna) bei Rothensand ab."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Beschluss F2025 / Sitzungsprotokoll Hirschaid (Sept. 2025)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "24.09.2025",
@@ -1172,10 +1167,9 @@ historie_data = [
             "Formelle Übergabe der gesammelten Unterschriften für das"
             " eingeleitete Bürgerbegehren."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Nachweis Bürgerbegehren / Übergabeprotokoll (24.09.2025)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "17.11.2025",
@@ -1188,8 +1182,7 @@ historie_data = [
             " Gemeinde Altendorf zu den Vorplanungen des Windparks Seußling-West"
             " und Erläuterung des bevorstehenden Bürgerentscheids."
         ),
-        "Nachweis": "Bekanntmachung Gemeinde Altendorf (17.11.2025)",
-        "Link": None,
+        "Nachweis / Link": "Bekanntmachung Gemeinde Altendorf (17.11.2025)",
     },
     {
         "Datum / Zeitraum": "14.12.2025",
@@ -1201,10 +1194,9 @@ historie_data = [
             " stoppen die Gemeinden Altendorf und Hirschaid die Planungen für"
             " eigene kommunale Windkraftanlagen im Gebiet Seußling-West."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Amtliches Wahlergebnis Bürgerentscheid Altendorf (14.12.2025)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "20.04.2026",
@@ -1218,10 +1210,9 @@ historie_data = [
             " Antrag auf Ausweisung eines Vorranggebiets beim ehemaligen"
             " Muna-Depot wird vom RPV offiziell abgelehnt."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Beschlussunterlagen RPV Oberfranken-West (20.04.2026)"
         ),
-        "Link": None,
     },
     {
         "Datum / Zeitraum": "Stand heute (2026)",
@@ -1238,10 +1229,9 @@ historie_data = [
             " Windräder auf der ehem. Muna fest und streben ein"
             " BImSchG-Einzelgenehmigungsverfahren beim Landratsamt Bamberg an."
         ),
-        "Nachweis": (
+        "Nachweis / Link": (
             "Schriftliche Bestätigung Geschäftsführung Stadtwerke Bamberg (2026)"
         ),
-        "Link": None,
     },
 ]
 
@@ -1250,22 +1240,6 @@ df_historie = pd.DataFrame(historie_data)
 # Interaktive Tabellendarstellung in Streamlit
 st.dataframe(
     df_historie,
-    column_config={
-        # Nutzt 'Nachweis' als anzuzeigenden Text und 'Link' als Ziel-URL
-        "Link": st.column_config.LinkColumn(
-            "Nachweis / Link",
-            display_text=r".*",  # Zeigt den Text aus der 'Nachweis'-Spalte oder den Link an
-            help="Klicken, um die externe Quelle zu öffnen",
-        ),
-        "Nachweis": None,  # Versteckt die Hilfs-Spalte 'Nachweis', da deren Inhalt in Link angezeigt werden kann
-    },
-    column_order=[
-        "Datum / Zeitraum",
-        "Ereignis / Beschluss",
-        "Beteiligte / Ort",
-        "Details & Auswirkungen",
-        "Link",
-    ],
     use_container_width=True,
     hide_index=True,
 )
