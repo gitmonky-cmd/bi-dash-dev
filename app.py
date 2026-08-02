@@ -1276,7 +1276,7 @@ with st.expander("⚖️ Impressum & Datenschutzerklärung anzeigen", expanded=F
     st.markdown("### Datenschutzerklärung")
     st.markdown("""
     #### Wer wir sind
-    Die Adresse unserer Website ist: [https://windpark-info.de](https://windpark-info.de) sowie die Webanwendung [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/).
+    Die Adresse unserer Website ist: [https://bi-hirschaid-altendorf.streamlit.app](https://bi-hirschaid-altendorf.streamlit.app) sowie die Webanwendung [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/).
 
     #### Welche personenbezogenen Daten wir sammeln und warum wir sie sammeln
     * **Kommentare:** Wenn Besucher Kommentare schreiben, sammeln wir die Daten im Formular, die IP-Adresse und den User-Agent-String zur Spam-Erkennung. Hash-Abgleich über Gravatar möglich ([Datenschutz Gravatar](https://automattic.com/privacy/)).
