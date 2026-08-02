@@ -850,7 +850,7 @@ Ein zentraler Großbatteriespeicher (BESS) am **Umspannwerk Hirschaid** mit ca. 
 """)
 
 # =============================================================================
-# DASHBOARD 7: HISTORIE DER WINDKRAFT IN HIRSCHAID UND ALTENDORF
+# DASHBOARD 7: POTENZIAL FÜR BATTERIESPEICHER IN DER GEMEINDE ALTENDORF (96146)
 # =============================================================================
 
 st.markdown(
@@ -858,7 +858,122 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.header("7️⃣ Historie der Windkraft in Hirschaid und Altendorf")
+st.header("7️⃣ Speicher-Potenzial für die Gemeinde Altendorf (96146)")
+st.caption(
+    "Analyse der dezentralen Heimspeicher, Gewerbepuffer und"
+    " BESS-Möglichkeiten an Freiflächen-Knotenpunkten im Gemeindegebiet"
+    " Altendorf / Seußling"
+)
+
+# Top KPIs für Altendorf
+b1, b2, b3 = st.columns(3)
+
+with b1:
+    st.metric(
+        label="Installierte Heimspeicher (Altendorf IST)",
+        value="ca. 2,8 MWh",
+        delta="An ~190 Dachanlagen in 96146",
+    )
+
+with b2:
+    st.metric(
+        label="Netzanbindung Ortseinspeisung",
+        value="20 kV Mittelspannung",
+        delta="Anbindung Richtung UW Hirschaid",
+        delta_color="off",
+    )
+
+with b3:
+    st.metric(
+        label="Sinnvolles BESS-Potenzial (Altendorf)",
+        value="5,0 MW / 10,0 MWh",
+        delta="Gekoppelt an Freiflächen / 20kV-Ortsnetz",
+    )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+col_alt_l, col_alt_r = st.columns([1.2, 1])
+
+with col_alt_l:
+    st.subheader(
+        "🔋 Speicherkapazitäten in Altendorf (Bestand vs. Potenzial)"
+    )
+
+    speicher_kategorien_alt = [
+        "Private Heimspeicher (Altendorf IST)",
+        "Gewerbe- & Landwirtschaft (IST)",
+        "Co-Located BESS (Freiflächen/FF-PV Seußling)",
+    ]
+    speicher_leistung_alt = [1.5, 0.6, 5.0]
+    speicher_kapazitaet_alt = [2.2, 0.8, 10.0]
+
+    df_bess_alt = pd.DataFrame({
+        "Speichertyp": speicher_kategorien_alt,
+        "Leistung (MW)": speicher_leistung_alt,
+        "Kapazität (MWh)": speicher_kapazitaet_alt,
+    })
+
+    fig_bess_alt = go.Figure()
+    fig_bess_alt.add_trace(
+        go.Bar(
+            x=df_bess_alt["Speichertyp"],
+            y=df_bess_alt["Kapazität (MWh)"],
+            name="Speicherkapazität (MWh)",
+            marker_color="#00E676",
+            hovertemplate="%{x}: %{y:.1f} MWh Kapazität<extra></extra>",
+        )
+    )
+    fig_bess_alt.add_trace(
+        go.Bar(
+            x=df_bess_alt["Speichertyp"],
+            y=df_bess_alt["Leistung (MW)"],
+            name="Ausspeiseleistung (MW)",
+            marker_color="#00B0FF",
+            hovertemplate="%{x}: %{y:.1f} MW Leistung<extra></extra>",
+        )
+    )
+
+    fig_bess_alt.update_layout(
+        barmode="group",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#FFFFFF", size=13),
+        yaxis=dict(
+            title="Megawatt (MW) / Megawattstunden (MWh)",
+            showgrid=True,
+            gridcolor="#2A3547",
+        ),
+        xaxis=dict(showgrid=False),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
+        ),
+        margin=dict(l=20, r=20, t=20, b=80),
+    )
+    st.plotly_chart(fig_bess_alt, use_container_width=True)
+
+with col_alt_r:
+    st.subheader("💡 Netzdienlicher Mehrwert für Altendorf")
+    st.markdown("""
+    * **Entlastung der Ortsnetztrafos:** Hohe PV-Einspeisung zur Mittagszeit in Seußling und Altendorf führt zu Spannungsanhebungen im 20-kV-Ortsnetz. Lokale Speicher glätten diese Spitzen ab.
+    * **Synergie mit Freiflächen-PV:** Bei neuen oder bestehenden Freiflächen-Anlagen (z. B. im 200m-Bahn- / Autobahn-Korridor) sichert ein Batteriespeicher den Netzzugang, ohne dass die Einspeisung bei Überlastung abgeregelt werden muss.
+    * **Hohe Heimspeicher-Quote:** Durch die hohe Dichte an Eigenheimen ist der prozentuale Eigenversorgungsgrad in Altendorf (48,5 %) bereits überdurchschnittlich hoch.
+    """)
+
+st.info("""
+**⚡ Fazit für die Gemeinde Altendorf:** 
+Mit einem gezielten Ausbau von **5 MW / 10 MWh Speicherkapazität** (kombiniert aus Quartiersspeichern und Co-Located-Puffern an Freiflächen-PV) kann Altendorf seinen erzeugten Sonnenstrom (8,4 MWp) nahezu vollständig vor Ort verwerten, Einspeisespitzen abfedern und den Autarkiegrad weiter steigern.
+""")
+
+# =============================================================================
+# DASHBOARD 8: HISTORIE DER WINDKRAFT IN HIRSCHAID UND ALTENDORF
+# =============================================================================
+
+st.markdown(
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
+)
+
+st.header("8️⃣ Historie der Windkraft in Hirschaid und Altendorf")
 st.caption(
     "Chronologische Übersicht über die Entwicklung, Meilensteine,"
     " Ratsbeschlüsse und Bürgerentscheide bezüglich der Windkraftplanungen"
