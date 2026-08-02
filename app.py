@@ -734,7 +734,7 @@ st.info("""
 """)
 
 # =============================================================================
-# DASHBOARD 6: POTENZIAL FÜR BATTERIESPEICHER IN HIRSCHAID & ALTENDORF
+# DASHBOARD 6: POTENZIAL FÜR BATTERIESPEICHER IN DER GEMEINDE HIRSCHAID
 # =============================================================================
 
 st.markdown(
@@ -743,7 +743,7 @@ st.markdown(
 )
 
 st.header(
-    "6️⃣ Potenzial für BESS (Batteriespeicher) & Netzkapazitäten"
+    "6️⃣ Speicher-Potenzial für BESS (Batteriespeicher) & Netzkapazitäten in Hirschaid"
 )
 st.caption(
     "Analyse der dezentralen Heimspeicher und der möglichen"
@@ -832,7 +832,7 @@ with col_bess_l:
         legend=dict(
             orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
         ),
-        margin=dict(l=20, r=20, t=20, b=80),
+        margin=dict(l=20, r=20, t=20, b=120),
     )
     st.plotly_chart(fig_bess, use_container_width=True)
 
@@ -947,7 +947,7 @@ with col_alt_l:
         legend=dict(
             orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
         ),
-        margin=dict(l=20, r=20, t=20, b=80),
+        margin=dict(l=20, r=20, t=20, b=120),
     )
     st.plotly_chart(fig_bess_alt, use_container_width=True)
 
