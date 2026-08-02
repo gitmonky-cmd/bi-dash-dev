@@ -1249,14 +1249,13 @@ st.dataframe(
 # Impressum & Datenschutz (Ausklappbar)
 # ==========================================
 
-# Visuelle Trennlinie am Ende der Seite
 st.divider()
 
-# Ausklappbares Menü (klappt nach unten auf)
+# Ausklappbares Menü
 with st.expander("⚖️ Impressum & Datenschutzerklärung anzeigen", expanded=False):
     
     # 1. IMPRESSUM
-    st.subsection if hasattr(st, 'subsection') else st.markdown("### Impressum")
+    st.markdown("### Impressum")
     st.markdown("""
     **Bürgerinitiative Hirschaid-Altendorf e.V.**  
     Industriestraße 13  
@@ -1272,18 +1271,28 @@ with st.expander("⚖️ Impressum & Datenschutzerklärung anzeigen", expanded=F
 
     st.markdown("---")
 
-    # 2. DATENSCHUTZ
+    # 2. DATENSCHUTZERKLÄRUNG
     st.markdown("### Datenschutzerklärung")
+    
+    st.markdown("#### Wer wir sind")
     st.markdown("""
-    #### Wer wir sind
-    Die Adresse unserer Website ist: [https://bi-hirschaid-altendorf.streamlit.app](https://bi-hirschaid-altendorf.streamlit.app) sowie die Webanwendung [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/).
+    Die Adresse unserer Website ist: [https://windpark-info.de](https://windpark-info.de) sowie die Webanwendung [https://bi-hirschaid-altendorf.streamlit.app/](https://bi-hirschaid-altendorf.streamlit.app/).
+    """)
 
-    #### Welche personenbezogenen Daten wir sammeln und warum wir sie sammeln
-    * **Kommentare:** Wenn Besucher Kommentare schreiben, sammeln wir die Daten im Formular, die IP-Adresse und den User-Agent-String zur Spam-Erkennung. Hash-Abgleich über Gravatar möglich ([Datenschutz Gravatar](https://automattic.com/privacy/)).
-    * **Medien:** Bitte vermeide das Hochladen von Bildern mit EXIF-GPS-Standortdaten.
-    * **Cookies:** Speicherung von Namen/E-Mail in Cookies für 1 Jahr möglich. Temporäre Login-Cookies verfallen beim Schließen des Browsers.
-    * **Eingebettete Inhalte:** Inhalte von externen Websites verhalten sich so, als ob der Besucher direkt diese Website besucht.
+    st.markdown("#### Welche personenbezogenen Daten wir sammeln und warum wir sie sammeln")
+    st.markdown("""
+    * **Kommentare:** Wenn Besucher Kommentare auf der Website schreiben, sammeln wir die Daten, die im Kommentar-Formular angezeigt werden, außerdem die IP-Adresse des Besuchers und den User-Agent-String (damit wird der Browser identifiziert), um die Erkennung von Spam zu unterstützen. Aus deiner E-Mail-Adresse kann eine anonymisierte Zeichenfolge erstellt (Hash) und dem Gravatar-Dienst übergeben werden ([Datenschutz Gravatar](https://automattic.com/privacy/)).
+    * **Medien:** Wenn du Fotos auf diese Website lädst, solltest du vermeiden, Fotos mit einem EXIF-GPS-Standort hochzuladen.
+    * **Cookies:** Wenn du einen Kommentar schreibst, kann das eine Einwilligung sein, deinen Namen, E-Mail-Adresse und Website in Cookies zu speichern (1 Jahr). Temporäre Login-Cookies verfallen beim Schließen des Browsers.
+    * **Eingebettete Inhalte:** Beiträge können eingebettete Inhalte beinhalten (z. B. Videos, Bilder, Beiträge etc.). Diese verhalten sich exakt so, als ob der Besucher die andere Website besucht hätte.
+    """)
 
-    #### Rechte & Speicherdauer
-    Kommentare bleiben zeitlich unbegrenzt gespeichert. Registrierte Nutzer können ihre Daten jederzeit einsehen, ändern oder löschen lassen. Du hast das Recht auf Auskunft, Datenexport und Löschung deiner Daten.
+    st.markdown("#### Rechte & Speicherdauer")
+    st.markdown("""
+    Wenn du einen Kommentar schreibst, wird dieser inklusive Metadaten zeitlich unbegrenzt gespeichert. Registrierte Nutzer können ihre Daten jederzeit einsehen, verändern oder löschen. Du kannst einen Export deiner personenbezogenen Daten bei uns anfordern oder die Löschung beantragen.
+    """)
+
+    st.markdown("#### Wohin wir deine Daten senden")
+    st.markdown("""
+    Besucher-Kommentare könnten von einem automatisierten Dienst zur Spam-Erkennung untersucht werden.
     """)
