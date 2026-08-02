@@ -734,7 +734,123 @@ st.info("""
 """)
 
 # =============================================================================
-# DASHBOARD 6: HISTORIE DER WINDKRAFT IN HIRSCHAID UND ALTENDORF
+# DASHBOARD 6: POTENZIAL FÜR BATTERIESPEICHER IN HIRSCHAID & ALTENDORF
+# =============================================================================
+
+st.markdown(
+    "<br><br><hr style='border: 2px solid #2A3547;'><br>",
+    unsafe_allow_html=True,
+)
+
+st.header(
+    "7️⃣ Potenzial für BESS (Batteriespeicher) & Netzkapazitäten"
+)
+st.caption(
+    "Analyse der dezentralen Heimspeicher und der möglichen"
+    " Großbatteriespeicher-Kapazitäten am Umspannwerk Hirschaid (Bayernwerk"
+    " Netz)"
+)
+
+# Top KPIs zu Speichern
+b1, b2, b3 = st.columns(3)
+
+with b1:
+    st.metric(
+        label="Installierte Heimspeicher (IST)",
+        value="ca. 14,2 MWh",
+        delta="An ~1.050 Dachanlagen gekoppelt",
+    )
+
+with b2:
+    st.metric(
+        label="Einspeisepfad Umspannwerk Hirschaid",
+        value="110 kV / 20 kV",
+        delta="Netzknoten Bayernwerk Netz",
+        delta_color="off",
+    )
+
+with b3:
+    st.metric(
+        label="Mögliches BESS-Großspeicher-Potenzial",
+        value="20 MW / 40 MWh",
+        delta="Netzdienliche Pufferung am UW",
+    )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Visualisierung: Speicher-Struktur und Ausgleichs-Potenzial
+col_bess_l, col_bess_r = st.columns([1.2, 1])
+
+with col_bess_l:
+    st.subheader("🔋 Bestand vs. Ausbaupotenzial der Speicherkapazitäten")
+
+    speicher_kategorien = [
+        "Private Heimspeicher (IST)",
+        "Gewerbe- & Landwirtschaftsspeicher (IST)",
+        "Netzdienlicher Großspeicher (Potenzial UW Hirschaid)",
+    ]
+    speicher_leistung_mw = [7.5, 3.0, 20.0]
+    speicher_kapazitaet_mwh = [10.5, 3.7, 40.0]
+
+    df_bess = pd.DataFrame({
+        "Speichertyp": speicher_kategorien,
+        "Leistung (MW)": speicher_leistung_mw,
+        "Kapazität (MWh)": speicher_kapazitaet_mwh,
+    })
+
+    fig_bess = go.Figure()
+    fig_bess.add_trace(
+        go.Bar(
+            x=df_bess["Speichertyp"],
+            y=df_bess["Kapazität (MWh)"],
+            name="Speicherkapazität (MWh)",
+            marker_color="#00E676",
+            hovertemplate="%{x}: %{y:.1f} MWh Kapazität<extra></extra>",
+        )
+    )
+    fig_bess.add_trace(
+        go.Bar(
+            x=df_bess["Speichertyp"],
+            y=df_bess["Leistung (MW)"],
+            name="Ausspeiseleistung (MW)",
+            marker_color="#00B0FF",
+            hovertemplate="%{x}: %{y:.1f} MW Leistung<extra></extra>",
+        )
+    )
+
+    fig_bess.update_layout(
+        barmode="group",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#FFFFFF", size=13),
+        yaxis=dict(
+            title="Megawatt (MW) / Megawattstunden (MWh)",
+            showgrid=True,
+            gridcolor="#2A3547",
+        ),
+        xaxis=dict(showgrid=False),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
+        ),
+        margin=dict(l=20, r=20, t=20, b=80),
+    )
+    st.plotly_chart(fig_bess, use_container_width=True)
+
+with col_bess_r:
+    st.subheader("💡 Netzdienlicher Nutzen für Hirschaid & Altendorf")
+    st.markdown("""
+    * **Pufferung der Mittagsspitze (Peak Shaving):** Die lokalen PV-Anlagen (45,2 MWp) erzeugen im Sommer zur Mittagszeit mehr Strom als lokal verbraucht wird. Ein Großspeicher am Umspannwerk fängt Spitzen ab und verhindert Abschaltungen.
+    * **Entlastung der 110-kV-Trasse:** Der Strom verbleibt bilanztechnisch in der Region und muss nicht überregional abtransportiert werden.
+    * **Vermeidung fossiler Ramping-Kosten:** In den Abendstunden (18:00–22:00 Uhr) kann der gespeicherte Mittags-Solarstrom direkt wieder in das Mittelspannungsnetz abgegeben werden.
+    """)
+
+st.info("""
+**⚡ Fazit für den Netzknoten Hirschaid:** 
+Ein zentraler Großbatteriespeicher (BESS) am **Umspannwerk Hirschaid** mit ca. **20 MW / 40 MWh** würde die bestehende Infrastruktur ideal ergänzen. Dadurch lassen sich die bereits installierten **45,2 MWp Sonnenenergie** aus Hirschaid und Altendorf rund um die Uhr nutzen, ohne dass neue Flächen im Außenbereich für Erzeugungsanlagen opfert werden müssen.
+""")
+
+# =============================================================================
+# DASHBOARD 7: HISTORIE DER WINDKRAFT IN HIRSCHAID UND ALTENDORF
 # =============================================================================
 
 st.markdown(
